@@ -1,15 +1,18 @@
-// utils/database.go
 package utils
 
 import (
 	"context"
 	"log"
+	"sync"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var db *mongo.Database
+var (
+	db         *mongo.Database
+	dbInitOnce sync.Once
+)
 
 func InitDatabase() {
 	// Cadena de conexión de MongoDB Atlas
@@ -23,13 +26,16 @@ func InitDatabase() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer client.Disconnect(context.Background())
 
-	// Obtener una referencia a la base de datos y la colección
-	db = client.Database("<spacio>")
+	// Asignar la referencia a la base de datos
+	db = client.Database("spacio")
 }
 
 // GetCollection devuelve una referencia a la colección especificada
 func GetCollection(collectionName string) *mongo.Collection {
+	dbInitOnce.Do(func() {
+		InitDatabase() // Asegurarse de que la conexión esté inicializada
+	})
+
 	return db.Collection(collectionName)
 }
