@@ -1,30 +1,38 @@
-// handlers/update_handler.go
 package handlers
 
 import (
-	"log"
-
-	"github.com/gofiber/fiber/v2"
-
 	"github.com/Spacio-app/content-management-microservice/models"
 	"github.com/Spacio-app/content-management-microservice/services"
+	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// UpdateContentHandler maneja la solicitud para actualizar un registro de contenido por ID
 func UpdateContentHandler(c *fiber.Ctx) error {
-	id := c.Params("id")
+	idParam := c.Params("id")
 
-	var updatedContent models.Content
+	objectID, err := primitive.ObjectIDFromHex(idParam)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "ID inválido",
+		})
+	}
+
+	var updatedContent models.Courses
 	if err := c.BodyParser(&updatedContent); err != nil {
-		log.Println("Error al analizar el cuerpo de la solicitud:", err)
-		return err
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Datos inválidos",
+		})
 	}
 
-	updatedContent.ID = id
-
-	if err := services.UpdateContent(&updatedContent); err != nil {
-		log.Println("Error al actualizar el contenido en el handler:", err)
-		return err
+	err = services.UpdateContentByID(objectID, updatedContent)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al actualizar el contenido por ID",
+		})
 	}
 
-	return c.JSON(updatedContent)
+	return c.JSON(fiber.Map{
+		"message": "Registro actualizado con éxito",
+	})
 }

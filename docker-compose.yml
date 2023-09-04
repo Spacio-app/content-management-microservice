@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/usr/src/app
+    command: air ./cmd/main.go -b 0.0.0.0
+
+# volumes:
+#   postgres-db:
+  # mongodb:
+  #   image: mongo:latest  # Utiliza la imagen oficial de MongoDB desde Docker Hub
+  #   environment:
+  #     - MONGO_INITDB_ROOT_USERNAME=${MONGO_INITDB_ROOT_USERNAME}
+  #     - MONGO_INITDB_ROOT_PASSWORD=${MONGO_INITDB_ROOT_PASSWORD}
+  #   ports:
+  #     - "27017:27017"  # Mapea el puerto de MongoDB
+  #   volumes:
+  #     - mongodb-data:/data/db  # Almacena los datos de MongoDB en un volumen
