@@ -4,10 +4,10 @@ services:
   web:
     build: .
     ports:
-      - "8080:8080"
+      - "8080:3000"
     volumes:
       - .:/usr/src/app
-    command: air ./cmd/main.go
+    command: air ./cmd/main.go -b 0.0.0.0
 
 # volumes:
 #   postgres-db:
