@@ -67,7 +67,7 @@ func main() {
 	}
 
 	// Iniciar el servidor
-	port := 3001
+	port := 8080
 	err = app.Listen(fmt.Sprintf(":%d", port))
 	if err != nil {
 		fmt.Printf("Error al iniciar el servidor: %s\n", err)
