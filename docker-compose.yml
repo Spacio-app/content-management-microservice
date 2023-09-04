@@ -7,7 +7,7 @@ services:
       - "8080:8080"
     volumes:
       - .:/usr/src/app
-    command: air ./cmd/main.go -b 0.0.0.0
+    command: air ./cmd/main.go
 
 # volumes:
 #   postgres-db:
