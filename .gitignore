@@ -1,0 +1,11 @@
+# Binaries for programs and plugins
+/tmp
+.env
+
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+go.work
