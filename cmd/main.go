@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 
 	//	"github.com/joho/godotenv"
 
@@ -67,8 +68,8 @@ func main() {
 	}
 
 	// Iniciar el servidor
-	port := 3000
-	err = app.Listen(fmt.Sprintf(":%d", port))
+	port := os.Getenv("PORT")
+	err = app.Listen(":" + port)
 	if err != nil {
 		fmt.Printf("Error al iniciar el servidor: %s\n", err)
 	} else {
