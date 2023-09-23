@@ -3,14 +3,14 @@ package repositories
 import (
 	"context"
 
-	"github.com/Spacio-app/content-management-microservice/models"
+	"github.com/Spacio-app/content-management-microservice/domain/models"
 	"github.com/Spacio-app/content-management-microservice/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func UpdateContentByID(id primitive.ObjectID, updatedContent models.Courses) error {
-	collection := utils.GetCollection("content")
+	collection := utils.GetCollection("Content")
 	filter := bson.M{"_id": id}
 	update := bson.M{"$set": updatedContent}
 

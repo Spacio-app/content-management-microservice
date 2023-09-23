@@ -8,7 +8,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
-	// "os"
 	//	"github.com/joho/godotenv"
 	"fmt"
 )
@@ -24,8 +23,8 @@ func InitDatabase() {
 	//     fmt.Println("Error cargando el archivo .env")
 	//     os.Exit(1)
 	// }
-	//connectionString := os.Getenv("MONGO_DB_URL")
-	connectionString := "mongodb+srv://root:root@spacio.ens4lgr.mongodb.net/?retryWrites=true&w=majority"
+	//connectionString := os.Getenv("MONGODB_URI")
+	connectionString := "mongodb+srv://spacio:yrhxtXKZd5O1EUVa@spacio.b0dcbnn.mongodb.net/?retryWrites=true&w=majority"
 
 	fmt.Printf("connectionString: %s \n", connectionString)
 	// Opciones de configuración

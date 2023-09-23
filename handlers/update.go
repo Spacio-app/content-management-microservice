@@ -1,7 +1,7 @@
 package handlers
 
 import (
-	"github.com/Spacio-app/content-management-microservice/models"
+	"github.com/Spacio-app/content-management-microservice/domain/models"
 	"github.com/Spacio-app/content-management-microservice/services"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"

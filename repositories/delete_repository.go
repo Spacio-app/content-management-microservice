@@ -9,7 +9,7 @@ import (
 )
 
 func DeleteContentByID(id primitive.ObjectID) error {
-	collection := utils.GetCollection("content")
+	collection := utils.GetCollection("Content")
 	filter := bson.M{"_id": id}
 
 	_, err := collection.DeleteOne(context.Background(), filter)

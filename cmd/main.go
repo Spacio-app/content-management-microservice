@@ -5,7 +5,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 
 	//	"github.com/joho/godotenv"
 
@@ -44,10 +43,11 @@ func main() {
 	routes.SetupRoutes(app)
 
 	// Obtener una referencia a la colección
-	collection := utils.GetCollection("content") // <colección>
+	collection := utils.GetCollection("Content") // <colección>
 
 	// Consulta
-	filter := bson.M{"campo": "valor"}
+	// filter := bson.M{"campo": "valor"}
+	filter := bson.M{} // <filtro>
 	cursor, err := collection.Find(context.Background(), filter)
 	if err != nil {
 		log.Fatal(err)
@@ -68,11 +68,12 @@ func main() {
 	}
 
 	// Iniciar el servidor
-	port := os.Getenv("PORT")
-	err = app.Listen(":" + port)
+	port := ":3001"
+	err = app.Listen(port)
 	if err != nil {
 		fmt.Printf("Error al iniciar el servidor: %s\n", err)
+		return
 	} else {
-		fmt.Printf("Servidor en ejecución en el puerto %d\n", port)
+		fmt.Printf("Servidor en ejecución en el puerto %s\n", port)
 	}
 }

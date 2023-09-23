@@ -3,14 +3,14 @@ package repositories
 import (
 	"context"
 
-	"github.com/Spacio-app/content-management-microservice/models"
+	"github.com/Spacio-app/content-management-microservice/domain/models"
 	"github.com/Spacio-app/content-management-microservice/utils"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func GetContentByID(id primitive.ObjectID) (*models.Courses, error) {
-	collection := utils.GetCollection("content")
+	collection := utils.GetCollection("Content")
 	filter := bson.M{"_id": id}
 
 	var content models.Courses
@@ -22,7 +22,7 @@ func GetContentByID(id primitive.ObjectID) (*models.Courses, error) {
 	return &content, nil
 }
 func GetAllContent() ([]models.Courses, error) {
-	collection := utils.GetCollection("content")
+	collection := utils.GetCollection("Content")
 	cursor, err := collection.Find(context.Background(), bson.M{})
 	if err != nil {
 		return nil, err
