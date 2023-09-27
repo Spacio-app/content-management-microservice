@@ -11,6 +11,7 @@ import (
 func CreateCourse(content interface{}) error {
 	collection := utils.GetCollection("Content")
 	log.Printf("Content: %v\n", content)
+	log.Println("Insertando datos en la base de datos...")
 	_, err := collection.InsertOne(context.Background(), content)
 	if err != nil {
 		log.Printf("Error al crear el curso: %v\n", err)

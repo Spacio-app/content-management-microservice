@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"os"
 
 	//	"github.com/joho/godotenv"
 
@@ -40,6 +41,16 @@ func main() {
 	}))
 	// app.Use(middleware.SessionValidationMiddleware())
 	// Configurar rutas
+	// Configurar el archivo de registro
+	logFile, err := os.Create("app.log")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer logFile.Close()
+
+	// Configurar el registro para que escriba en el archivo
+	log.SetOutput(logFile)
+
 	routes.SetupRoutes(app)
 
 	// Obtener una referencia a la colección

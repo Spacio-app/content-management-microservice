@@ -2,12 +2,18 @@
 package services
 
 import (
+	"fmt"
+	"log"
+
 	"github.com/Spacio-app/content-management-microservice/domain/models"
 	"github.com/Spacio-app/content-management-microservice/repositories"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateCourse(content interface{}) error {
+	fmt.Println("contentasds", content)
+	log.Println("Guardando curso en la base de datos...")
+
 	return repositories.CreateCourse(content)
 }
 func CreatePost(content interface{}) error {

@@ -13,10 +13,10 @@ type CourseReq struct {
 }
 
 // req interface
-func (c *CourseReq) GetTitle() string {
-	return c.Title
-}
+// func (c *CourseReq) GetTitle() string {
+// 	return c.Title
+// }
 
-func (c *CourseReq) GetID() string {
-	return c.ID
-}
+// func (c *CourseReq) GetID() string {
+// 	return c.ID
+// }
