@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/Spacio-app/content-management-microservice/domain/models"
 	"github.com/Spacio-app/content-management-microservice/utils"
@@ -21,7 +22,8 @@ func GetContentByID(id primitive.ObjectID) (*models.Courses, error) {
 
 	return &content, nil
 }
-func GetAllContent() ([]models.Courses, error) {
+
+func GetAllContent() ([]models.GenericContent, error) {
 	collection := utils.GetCollection("Content")
 	cursor, err := collection.Find(context.Background(), bson.M{})
 	if err != nil {
@@ -29,10 +31,10 @@ func GetAllContent() ([]models.Courses, error) {
 	}
 	defer cursor.Close(context.Background())
 
-	var content []models.Courses
+	var content []models.GenericContent
 	if err := cursor.All(context.Background(), &content); err != nil {
 		return nil, err
 	}
-
+	fmt.Println("content", content)
 	return content, nil
 }

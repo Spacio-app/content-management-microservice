@@ -2,38 +2,45 @@
 package services
 
 import (
+	"errors"
 	"fmt"
 	"log"
 
+	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/domain/models"
 	"github.com/Spacio-app/content-management-microservice/repositories"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func CreateCourse(content interface{}) error {
+// llamar repos, clientes, apis externas, para guardar, actualizar, eliminar.
+func CreateCourse(content domain.CourseReq) error {
 	fmt.Println("contentasds", content)
 	log.Println("Guardando curso en la base de datos...")
 
 	return repositories.CreateCourse(content)
 }
-func CreatePost(content interface{}) error {
+func CreatePost(content domain.PostReq) error {
 	return repositories.CreatePost(content)
 }
-func CreateFile(content interface{}) error {
+func CreateFile(content domain.FileReq) error {
 	return repositories.CreateFile(content)
 }
-func CreateTest(content interface{}) error {
+func CreateTest(content domain.TestReq) error {
 	return repositories.CreateTest(content)
 }
 
 func GetContentByID(id primitive.ObjectID) (*models.Courses, error) {
 	return repositories.GetContentByID(id)
 }
-func GetAllContent() ([]models.Courses, error) {
+func GetAllContent() ([]models.GenericContent, error) {
 	return repositories.GetAllContent()
 }
 func GetAllCourses() ([]models.Courses, error) {
-	return repositories.GetAllCourses()
+	courses, err := repositories.GetAllCourses()
+	if err != nil {
+		return nil, errors.New("error al obtener los cursos")
+	}
+	return courses, nil
 }
 func GetAllPosts() ([]models.Posts, error) {
 	return repositories.GetAllPosts()

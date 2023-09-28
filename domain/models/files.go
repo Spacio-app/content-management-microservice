@@ -2,7 +2,7 @@
 package models
 
 type Files struct {
-	AbstractContent
-	FilePath string `bson:"filePath" json:"filePath"`
+	AbstractContent `bson:",inline" json:",inline"`
+	FilePath        string `bson:"filepath" json:"filepath"`
 	// Otros campos que puedas necesitar
 }

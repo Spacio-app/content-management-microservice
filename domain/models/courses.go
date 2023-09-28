@@ -2,10 +2,10 @@
 package models
 
 type Courses struct {
-	AbstractContent
-	Miniature          string   `bson:"Miniature" json:"Miniature" validate:"required"`
-	VideosTitles       []string `bson:"VideosTitles" json:"VideosTitles" validate:"required"`
-	VideosDescriptions []string `bson:"VideosDescriptions" json:"VideosDescriptions" validate:"required"`
-	VideosURL          []string `bson:"VideosURL" json:"VideosURL" validate:"required"`
+	AbstractContent    `bson:",inline" json:",inline"`
+	Miniature          string   `bson:"miniature" json:"miniature" validate:"required"`
+	VideosTitles       []string `bson:"videostitle" json:"videostitle" validate:"required"`
+	VideosDescriptions []string `bson:"videosdescriptions" json:"videosdescriptions" validate:"required"`
+	VideosURL          []string `bson:"videosurl" json:"videosurl" validate:"required"`
 	// Otros campos que puedas necesitar
 }

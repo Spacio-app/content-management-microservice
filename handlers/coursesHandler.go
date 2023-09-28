@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
+// validar datos de entrada
 func CreateCourse(c *fiber.Ctx) error {
 
 	content := domain.CourseReq{}

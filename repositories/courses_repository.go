@@ -4,12 +4,14 @@ import (
 	"context"
 	"log"
 
+	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/domain/models"
 	"github.com/Spacio-app/content-management-microservice/utils"
 )
 
-func CreateCourse(content interface{}) error {
+func CreateCourse(content domain.CourseReq) error {
 	collection := utils.GetCollection("Content")
+	content.BeforeInsert() // Actualiza createdAt y updatedAt antes de insertar
 	log.Printf("Content: %v\n", content)
 	log.Println("Insertando datos en la base de datos...")
 	_, err := collection.InsertOne(context.Background(), content)

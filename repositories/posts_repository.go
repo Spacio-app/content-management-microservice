@@ -4,12 +4,14 @@ import (
 	"context"
 	"log"
 
+	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/domain/models"
 	"github.com/Spacio-app/content-management-microservice/utils"
 )
 
-func CreatePost(content interface{}) error {
+func CreatePost(content domain.PostReq) error {
 	collection := utils.GetCollection("Content")
+	content.BeforeInsert() // Actualiza createdAt y updatedAt antes de insertar
 	_, err := collection.InsertOne(context.Background(), content)
 	if err != nil {
 		log.Printf("Error al crear el post: %v\n", err)
