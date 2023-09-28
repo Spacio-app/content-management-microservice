@@ -2,14 +2,14 @@ package utils
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"sync"
+	"os"
+    "github.com/joho/godotenv"
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-
-	//	"github.com/joho/godotenv"
-	"fmt"
 )
 
 var (
@@ -18,15 +18,15 @@ var (
 )
 
 func InitDatabase() {
-	// Cadena de conexión de MongoDB Atlas
-	// if err := godotenv.Load(); err != nil {
-	//     fmt.Println("Error cargando el archivo .env")
-	//     os.Exit(1)
-	// }
-	//connectionString := os.Getenv("MONGODB_URI")
-	connectionString := "mongodb+srv://spacio:yrhxtXKZd5O1EUVa@spacio.b0dcbnn.mongodb.net/?retryWrites=true&w=majority"
+	// Cargar variables de entorno desde el archivo .env
+	if err := godotenv.Load(); err != nil {
+		fmt.Println("Error cargando el archivo .env")
+		log.Fatal(err)
+	}
 
-	fmt.Printf("connectionString: %s \n", connectionString)
+	// Obtener la cadena de conexión de MongoDB desde las variables de entorno
+	connectionString := os.Getenv("MONGODB_URI")
+
 	// Opciones de configuración
 	clientOptions := options.Client().ApplyURI(connectionString)
 
