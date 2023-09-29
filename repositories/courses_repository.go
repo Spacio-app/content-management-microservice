@@ -7,6 +7,8 @@ import (
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/domain/models"
 	"github.com/Spacio-app/content-management-microservice/utils"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateCourse(content domain.CourseReq) error {
@@ -24,26 +26,26 @@ func CreateCourse(content domain.CourseReq) error {
 // get all courses from content collection
 func GetAllCourses() ([]models.Courses, error) {
 	collection := utils.GetCollection("Content")
-	var courses []models.Courses
-	cursor, err := collection.Find(context.Background(), nil)
+	cursor, err := collection.Find(context.Background(), bson.M{})
 	if err != nil {
-		log.Printf("Error al obtener los cursos: %v\n", err)
-		return courses, err
+		return nil, err
 	}
-	err = cursor.All(context.Background(), &courses)
-	if err != nil {
-		log.Printf("Error al obtener los cursos: %v\n", err)
-		return courses, err
+	defer cursor.Close(context.Background())
+
+	var course []models.Courses
+	if err := cursor.All(context.Background(), &course); err != nil {
+		return nil, err
 	}
-	return courses, nil
+	return course, nil
 }
 
-// // update course
-// func UpdateCourse(id string, content interface{}) error {
-// 	collection := utils.GetCollection("Content")
-// 	_, err := collection.UpdateOne(context.Background(), id, content)
-// 	if err != nil {
-// 		log.Printf("Error al actualizar el curso: %v\n", err)
-// 	}
-// 	return err
-// }
+// update course
+func UpdateCourse(id primitive.ObjectID, content domain.CourseReq) error {
+	collection := utils.GetCollection("Content")
+	content.BeforeUpdate() // Actualiza updatedAt antes de actualizar
+	//mantener createdAt original
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": content}
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+	return err
+}

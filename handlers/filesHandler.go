@@ -6,12 +6,10 @@ import (
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/services"
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateFile(c *fiber.Ctx) error {
 	content := domain.FileReq{}
-	content.ID = primitive.NewObjectID().Hex() // Generar un ID único
 	if err := c.BodyParser(&content); err != nil {
 		log.Println("Error al analizar el cuerpo de la solicitud:", err)
 		return err
@@ -36,5 +34,21 @@ func GetAllFilesHandler(c *fiber.Ctx) error {
 		})
 	}
 
+	return c.JSON(content)
+}
+
+func UpdateFileHandler(c *fiber.Ctx) error {
+	id := c.Params("id")
+	content := domain.FileReq{}
+	if err := c.BodyParser(&content); err != nil {
+		log.Println("Error al analizar el cuerpo de la solicitud:", err)
+		return err
+	}
+	err := services.UpdateFile(id, content)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al actualizar el archivo",
+		})
+	}
 	return c.JSON(content)
 }

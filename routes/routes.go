@@ -11,18 +11,25 @@ import (
 )
 
 func SetupRoutes(app *fiber.App) {
+
 	app.Post("/contentCourse", handlers.CreateCourse)
 	app.Post("/contentPost", handlers.CreatePost)
 	app.Post("/contentFile", handlers.CreateFile)
 	app.Post("/contentTest", handlers.CreateTest)
+
 	app.Get("/contentCourse/", handlers.GetAllCoursesHandler)
 	app.Get("/contentPost/", handlers.GetAllPostsHandler)
 	app.Get("/contentFile/", handlers.GetAllFilesHandler)
 	app.Get("/contentTest/", handlers.GetAllTestsHandler)
 
+	app.Patch("/contentCourse/:id", handlers.UpdateCourseHandler)
+	app.Put("/contentPost/:id", handlers.UpdatePostHandler)
+	app.Put("/contentFile/:id", handlers.UpdateFileHandler)
+	app.Put("/contentTest/:id", handlers.UpdateTestHandler)
+
 	app.Get("/Content/:id", handlers.GetContentByIDHandler)
 	app.Get("/Content", handlers.GetAllContentHandler)
-	app.Put("/Content/:id", handlers.UpdateContentHandler)
+
 	app.Delete("/Content/:id", handlers.DeleteContentHandler)
 	// Agregar otras rutas para actualizar, eliminar y otras operaciones...
 }

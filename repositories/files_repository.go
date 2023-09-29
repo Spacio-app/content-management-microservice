@@ -7,6 +7,8 @@ import (
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/domain/models"
 	"github.com/Spacio-app/content-management-microservice/utils"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateFile(content domain.FileReq) error {
@@ -35,12 +37,12 @@ func GetAllFiles() ([]models.Files, error) {
 	return files, nil
 }
 
-//  update file
-// func UpdateFile(id string, content interface{}) error {
-// 	collection := utils.GetCollection("Content")
-// 	_, err := collection.UpdateOne(context.Background(), id, content)
-// 	if err != nil {
-// 		log.Printf("Error al actualizar el curso: %v\n", err)
-// 	}
-// 	return err
-// }
+// update file
+func UpdateFile(id primitive.ObjectID, content domain.FileReq) error {
+	collection := utils.GetCollection("Content")
+	content.BeforeUpdate() // Actualiza updatedAt antes de actualizar
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": content}
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+	return err
+}

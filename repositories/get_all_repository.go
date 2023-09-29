@@ -10,17 +10,16 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-func GetContentByID(id primitive.ObjectID) (*models.Courses, error) {
+// get content by id
+func GetContentByID(id primitive.ObjectID) (models.GenericContent, error) {
 	collection := utils.GetCollection("Content")
+	var content models.GenericContent
 	filter := bson.M{"_id": id}
-
-	var content models.Courses
 	err := collection.FindOne(context.Background(), filter).Decode(&content)
 	if err != nil {
-		return nil, err
+		return content, err
 	}
-
-	return &content, nil
+	return content, nil
 }
 
 func GetAllContent() ([]models.GenericContent, error) {

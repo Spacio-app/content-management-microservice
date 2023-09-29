@@ -7,6 +7,8 @@ import (
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/domain/models"
 	"github.com/Spacio-app/content-management-microservice/utils"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateTest(content domain.TestReq) error {
@@ -33,4 +35,14 @@ func GetAllTests() ([]models.Tests, error) {
 		return nil, err
 	}
 	return tests, nil
+}
+
+// update test
+func UpdateTest(id primitive.ObjectID, content domain.TestReq) error {
+	collection := utils.GetCollection("Content")
+	content.BeforeUpdate() // Actualiza updatedAt antes de actualizar
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": content}
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+	return err
 }

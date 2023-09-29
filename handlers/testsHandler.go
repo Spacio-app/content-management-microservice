@@ -6,12 +6,10 @@ import (
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/services"
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateTest(c *fiber.Ctx) error {
 	content := domain.TestReq{}
-	content.ID = primitive.NewObjectID().Hex() // Generar un ID único
 	if err := c.BodyParser(&content); err != nil {
 		log.Println("Error al analizar el cuerpo de la solicitud:", err)
 		return err
@@ -36,5 +34,22 @@ func GetAllTestsHandler(c *fiber.Ctx) error {
 		})
 	}
 
+	return c.JSON(content)
+}
+
+// update test
+func UpdateTestHandler(c *fiber.Ctx) error {
+	id := c.Params("id")
+	content := domain.TestReq{}
+	if err := c.BodyParser(&content); err != nil {
+		log.Println("Error al analizar el cuerpo de la solicitud:", err)
+		return err
+	}
+	err := services.UpdateTest(id, content)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al actualizar el test",
+		})
+	}
 	return c.JSON(content)
 }

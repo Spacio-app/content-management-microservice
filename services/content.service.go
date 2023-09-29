@@ -29,11 +29,15 @@ func CreateTest(content domain.TestReq) error {
 	return repositories.CreateTest(content)
 }
 
-func GetContentByID(id primitive.ObjectID) (*models.Courses, error) {
+func GetContentByID(id primitive.ObjectID) (models.GenericContent, error) {
 	return repositories.GetContentByID(id)
 }
 func GetAllContent() ([]models.GenericContent, error) {
-	return repositories.GetAllContent()
+	content, err := repositories.GetAllContent()
+	if err != nil {
+		return nil, errors.New("error al obtener el contenido")
+	}
+	return content, nil
 }
 func GetAllCourses() ([]models.Courses, error) {
 	courses, err := repositories.GetAllCourses()
@@ -52,13 +56,63 @@ func GetAllTests() ([]models.Tests, error) {
 	return repositories.GetAllTests()
 }
 
-// UpdateContentByID actualiza un registro de contenido por ID en el repositorio
-func UpdateContentByID(id primitive.ObjectID, updatedContent models.Courses) error {
-	return repositories.UpdateContentByID(id, updatedContent)
+// updates
+func UpdateCourse(id string, content domain.CourseReq) error {
+	// Convertir la cadena de texto a ObjectID
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return errors.New("ID inválido")
+	}
+
+	// Verificar si existe el contenido
+	_, err = repositories.GetContentByID(objectID)
+	if err != nil {
+		return errors.New("el contenido no existe")
+	}
+	return repositories.UpdateCourse(objectID, content)
+}
+
+func UpdatePost(id string, content domain.PostReq) error {
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return errors.New("ID inválido")
+	}
+	_, err = repositories.GetContentByID(objectID)
+	if err != nil {
+		return errors.New("el contenido no existe")
+	}
+	return repositories.UpdatePost(objectID, content)
+}
+func UpdateFile(id string, content domain.FileReq) error {
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return errors.New("ID inválido")
+	}
+	_, err = repositories.GetContentByID(objectID)
+	if err != nil {
+		return errors.New("el contenido no existe")
+	}
+	return repositories.UpdateFile(objectID, content)
+}
+func UpdateTest(id string, content domain.TestReq) error {
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return errors.New("ID inválido")
+	}
+	_, err = repositories.GetContentByID(objectID)
+	if err != nil {
+		return errors.New("el contenido no existe")
+	}
+	return repositories.UpdateTest(objectID, content)
 }
 
 // DeleteContentByID elimina un registro de contenido por ID del repositorio
 func DeleteContentByID(id primitive.ObjectID) error {
+	//verificar si existe el contenido
+	_, err := repositories.GetContentByID(id)
+	if err != nil {
+		return errors.New("el contenido no existe")
+	}
 	return repositories.DeleteContentByID(id)
 }
 

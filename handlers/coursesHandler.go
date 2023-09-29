@@ -7,14 +7,12 @@ import (
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/services"
 	"github.com/gofiber/fiber/v2"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // validar datos de entrada
 func CreateCourse(c *fiber.Ctx) error {
 
 	content := domain.CourseReq{}
-	content.ID = primitive.NewObjectID().Hex() // Generar un ID único
 	fmt.Println("content", c)
 	log.Println("Creando un nuevo curso...")
 	if err := c.BodyParser(&content); err != nil {
@@ -38,6 +36,22 @@ func GetAllCoursesHandler(c *fiber.Ctx) error {
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error al obtener los cursos",
+		})
+	}
+	return c.JSON(content)
+}
+
+func UpdateCourseHandler(c *fiber.Ctx) error {
+	id := c.Params("id")
+	content := domain.CourseReq{}
+	if err := c.BodyParser(&content); err != nil {
+		log.Println("Error al analizar el cuerpo de la solicitud:", err)
+		return err
+	}
+	err := services.UpdateCourse(id, content)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al actualizar el curso",
 		})
 	}
 	return c.JSON(content)

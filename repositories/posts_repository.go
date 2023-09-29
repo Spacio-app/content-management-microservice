@@ -7,6 +7,8 @@ import (
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/domain/models"
 	"github.com/Spacio-app/content-management-microservice/utils"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreatePost(content domain.PostReq) error {
@@ -36,11 +38,11 @@ func GetAllPosts() ([]models.Posts, error) {
 }
 
 // update post
-// func UpdatePost(id string, content interface{}) error {
-// 	collection := utils.GetCollection("Content")
-// 	_, err := collection.UpdateOne(context.Background(), id, content)
-// 	if err != nil {
-// 		log.Printf("Error al actualizar el post: %v\n", err)
-// 	}
-// 	return err
-// }
+func UpdatePost(id primitive.ObjectID, content domain.PostReq) error {
+	collection := utils.GetCollection("Content")
+	content.BeforeUpdate() // Actualiza updatedAt antes de actualizar
+	filter := bson.M{"_id": id}
+	update := bson.M{"$set": content}
+	_, err := collection.UpdateOne(context.Background(), filter, update)
+	return err
+}
