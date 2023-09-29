@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 	"sync"
 
 	"github.com/joho/godotenv"
@@ -26,8 +25,9 @@ func InitDatabase() {
 	}
 
 	// Obtener la cadena de conexión de MongoDB desde las variables de entorno
-	connectionString := os.Getenv("MONGODB_URI")
+	// connectionString := os.Getenv("MONGODB_URI") // <cadena de conexión>
 
+	connectionString := "mongodb+srv://spacio:yrhxtXKZd5O1EUVa@spacio.b0dcbnn.mongodb.net/?retryWrites=true&w=majority"
 	// Opciones de configuración
 	clientOptions := options.Client().ApplyURI(connectionString)
 
