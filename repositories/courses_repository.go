@@ -26,7 +26,8 @@ func CreateCourse(content domain.CourseReq) error {
 // get all courses from content collection
 func GetAllCourses() ([]models.Courses, error) {
 	collection := utils.GetCollection("Content")
-	cursor, err := collection.Find(context.Background(), bson.M{})
+	filter := bson.M{"contenttype": "course"}
+	cursor, err := collection.Find(context.Background(), filter)
 	if err != nil {
 		return nil, err
 	}

@@ -20,6 +20,8 @@ func (c *CourseReq) BeforeInsert() {
 	currentTime := time.Now()
 	c.CreatedAt = currentTime
 	c.UpdatedAt = currentTime
+	//establecer contentType
+	c.ContentType = "course"
 }
 
 // Función para actualizar UpdatedAt antes de actualizar

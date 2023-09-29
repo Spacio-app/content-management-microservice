@@ -17,6 +17,8 @@ func (c *PostReq) BeforeInsert() {
 	currentTime := time.Now()
 	c.CreatedAt = currentTime
 	c.UpdatedAt = currentTime
+	//establecer contentType
+	c.ContentType = "post"
 }
 
 // Función para actualizar UpdatedAt antes de actualizar

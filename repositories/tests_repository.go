@@ -24,7 +24,8 @@ func CreateTest(content domain.TestReq) error {
 func GetAllTests() ([]models.Tests, error) {
 	var tests []models.Tests
 	collection := utils.GetCollection("Content")
-	cursor, err := collection.Find(context.Background(), nil)
+	filter := bson.M{"contenttype": "test"}
+	cursor, err := collection.Find(context.Background(), filter)
 	if err != nil {
 		log.Printf("Error al obtener los cursos: %v\n", err)
 		return nil, err

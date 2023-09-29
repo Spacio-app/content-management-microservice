@@ -31,6 +31,8 @@ func (c *TestReq) BeforeInsert() {
 	currentTime := time.Now()
 	c.CreatedAt = currentTime
 	c.UpdatedAt = currentTime
+	//establecer contentType
+	c.ContentType = "test"
 }
 
 // Función para actualizar UpdatedAt antes de actualizar

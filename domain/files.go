@@ -17,6 +17,8 @@ func (c *FileReq) BeforeInsert() {
 	currentTime := time.Now()
 	c.CreatedAt = currentTime
 	c.UpdatedAt = currentTime
+	//establecer contentType
+	c.ContentType = "file"
 }
 
 // Función para actualizar UpdatedAt antes de actualizar

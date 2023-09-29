@@ -24,7 +24,8 @@ func CreatePost(content domain.PostReq) error {
 func GetAllPosts() ([]models.Posts, error) {
 	var posts []models.Posts
 	collection := utils.GetCollection("Content")
-	cursor, err := collection.Find(context.Background(), nil)
+	filter := bson.M{"contenttype": "post"}
+	cursor, err := collection.Find(context.Background(), filter)
 	if err != nil {
 		log.Printf("Error al obtener los posts: %v\n", err)
 		return nil, err

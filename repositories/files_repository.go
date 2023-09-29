@@ -24,7 +24,8 @@ func CreateFile(content domain.FileReq) error {
 func GetAllFiles() ([]models.Files, error) {
 	var files []models.Files
 	collection := utils.GetCollection("Content")
-	cursor, err := collection.Find(context.Background(), nil)
+	filter := bson.M{"contenttype": "file"}
+	cursor, err := collection.Find(context.Background(), filter)
 	if err != nil {
 		log.Printf("Error al obtener los cursos: %v\n", err)
 		return nil, err
