@@ -7,6 +7,8 @@ import (
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/domain/models"
 	"github.com/Spacio-app/content-management-microservice/utils"
+	"github.com/cloudinary/cloudinary-go/v2"
+	"github.com/cloudinary/cloudinary-go/v2/api/uploader"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
@@ -16,11 +18,32 @@ func CreateCourse(content domain.CourseReq) error {
 	content.BeforeInsert() // Actualiza createdAt y updatedAt antes de insertar
 	log.Printf("Content: %v\n", content)
 	log.Println("Insertando datos en la base de datos...")
+
+	// Slices para almacenar los publicIDs y URLs seguras de los videos
+	var publicIDs []string
+	var secureURLs []string
+
+	// Subir el video a Cloudinary y obtener el publicID y la URL segura
+	for _, videoURL := range content.VideosURL {
+		publicID, secureURL, err := utils.UploadVideoToCloudinary(videoURL)
+		if err != nil {
+			return err
+		}
+		// Agregar el publicID y la URL segura a los slices
+		publicIDs = append(publicIDs, publicID)
+		secureURLs = append(secureURLs, secureURL)
+	}
+
+	// Asignar los slices a la estructura de contenido
+	content.PublicIDCloudinary = publicIDs
+	content.VideosURL = secureURLs
+
 	_, err := collection.InsertOne(context.Background(), content)
 	if err != nil {
 		log.Printf("Error al crear el curso: %v\n", err)
+		return err
 	}
-	return err
+	return nil
 }
 
 // get all courses from content collection
@@ -49,4 +72,57 @@ func UpdateCourse(id primitive.ObjectID, content domain.CourseReq) error {
 	update := bson.M{"$set": content}
 	_, err := collection.UpdateOne(context.Background(), filter, update)
 	return err
+}
+
+// Initialize the Cloudinary client using environment variables
+// cloudinaryURL := os.Getenv("CLOUDINARY_URL")
+// cld, err := cloudinary.NewFromURL(cloudinaryURL)
+// if err != nil {
+// 	log.Fatalf("Error initializing Cloudinary client: %v", err)
+// }
+// // Upload each video link to Cloudinary
+// updatedContent, err := uploadVideoLinksToCloudinary(cld, content)
+// if err != nil {
+// 	log.Println("Error uploading video links to Cloudinary:", err)
+// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+// 		"error": "Error uploading video links",
+// 	})
+// }
+
+// // content.VideosURL = uploadedVideoLinks
+// // Upload each video link to Cloudinary
+// // uploadedVideoLinks := make([]string, len(content.VideosURL))
+// // for i, videoURL := range content.VideosURL {
+// // 	uploadedVideoLink, err := uploadVideoLinkToCloudinary(videoURL)
+// // 	if err != nil {
+// // 		log.Printf("Error uploading video link %d to Cloudinary: %v", i, err)
+// // 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+// // 			"error": "Error uploading video link",
+// // 		})
+// // 	}
+// // 	uploadedVideoLinks[i] = uploadedVideoLink
+// // }
+
+// // Set the Cloudinary URL of the uploaded video link in your content structure
+// // content.VideosURL = uploadedVideoLinks
+
+// Function to upload video links to Cloudinary
+func uploadVideoLinksToCloudinary(cld *cloudinary.Cloudinary, content *domain.CourseReq) (*domain.CourseReq, error) {
+	var updatedVideosURL []string
+
+	for _, videoLink := range content.VideosURL {
+		// Upload the video link to Cloudinary
+		uploadResult, err := cld.Upload.Upload(context.TODO(), videoLink, uploader.UploadParams{})
+		if err != nil {
+			return nil, err
+		}
+
+		// Append the URL of the uploaded video link to the updatedVideosURL slice
+		updatedVideosURL = append(updatedVideosURL, uploadResult.SecureURL)
+	}
+
+	// Update the content structure with the Cloudinary URLs
+	content.VideosURL = updatedVideosURL
+
+	return content, nil
 }

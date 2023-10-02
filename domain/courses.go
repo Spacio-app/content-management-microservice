@@ -12,6 +12,7 @@ type CourseReq struct {
 	Miniature          string    `json:"Miniature" validate:"required"`
 	VideosTitles       []string  `json:"VideosTitles" validate:"required"`
 	VideosDescriptions []string  `json:"VideosDescriptions" validate:"required"`
+	PublicIDCloudinary []string  `json:"PublicIDCloudinary" validate:"required"`
 	VideosURL          []string  `json:"VideosURL" validate:"required"`
 }
 

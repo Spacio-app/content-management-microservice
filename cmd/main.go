@@ -13,23 +13,27 @@ import (
 	"github.com/Spacio-app/content-management-microservice/utils"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/bson"
 )
 
+// func configureCloudinary() *cloudinary.Cloudinary {
+// 	cloudinaryURL := os.Getenv("CLOUDINARY_URL")
+// 	cld, err := cloudinary.NewFromURL(cloudinaryURL)
+// 	if err != nil {
+// 		log.Fatal(err)
+// 	}
+// 	return cld
+// }
+
 func main() {
 	// Inicializar la base de datos antes de configurar el servidor
+	// Load environment variables from .env file
+	if err := godotenv.Load(); err != nil {
+		log.Fatalf("Error loading .env file: %v", err)
+	}
+	utils.InitCloudinary()
 	utils.InitDatabase()
-	// if err := godotenv.Load(); err != nil {
-	//     fmt.Println("Error cargando el archivo .env")
-	//     os.Exit(1)
-	// }
-
-	// // Acceder a las variables de entorno
-	// dbHost := os.Getenv("DB_HOST")
-	// dbPort := os.Getenv("DB_PORT")
-	// dbUser := os.Getenv("DB_USER")
-	// dbPassword := os.Getenv("DB_PASSWORD")
-	// dbName := os.Getenv("DB_NAME")
 	// Crear instancia de Fiber
 	app := fiber.New()
 
@@ -40,6 +44,7 @@ func main() {
 		AllowMethods: "GET, POST, PUT, DELETE",
 	}))
 	// app.Use(middleware.SessionValidationMiddleware())
+
 	// Configurar rutas
 	// Configurar el archivo de registro
 	logFile, err := os.Create("app.log")
