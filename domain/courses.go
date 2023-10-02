@@ -3,6 +3,7 @@ package domain
 import "time"
 
 type CourseReq struct {
+	ID                 string    `json:"id,omitempty"`
 	Title              string    `json:"Title" validate:"required"`
 	Description        string    `json:"Description" validate:"required"`
 	ContentType        string    `json:"ContentType" validate:"required"`

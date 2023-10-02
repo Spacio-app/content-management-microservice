@@ -3,12 +3,14 @@ package domain
 import "time"
 
 type TestReq struct {
+	ID          string     `json:"id" validate:"required"`
 	Title       string     `json:"Title" validate:"required"`
 	Description string     `json:"Description" validate:"required"`
 	ContentType string     `json:"ContentType" validate:"required"`
 	Author      string     `json:"Author" validate:"required"`
 	CreatedAt   time.Time  `json:"createdat" validate:"required"`
 	UpdatedAt   time.Time  `json:"updatedat" validate:"required"`
+	Miniature   string     `bson:"miniature" json:"miniature,omitempty"`
 	Questions   []Question `json:"questions" validate:"required"`
 	// Otros campos que puedas necesitar
 

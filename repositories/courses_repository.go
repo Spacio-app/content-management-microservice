@@ -2,6 +2,7 @@ package repositories
 
 import (
 	"context"
+	"fmt"
 	"log"
 
 	"github.com/Spacio-app/content-management-microservice/domain"
@@ -14,29 +15,11 @@ import (
 )
 
 func CreateCourse(content domain.CourseReq) error {
+	fmt.Println(content)
 	collection := utils.GetCollection("Content")
 	content.BeforeInsert() // Actualiza createdAt y updatedAt antes de insertar
 	log.Printf("Content: %v\n", content)
 	log.Println("Insertando datos en la base de datos...")
-
-	// Slices para almacenar los publicIDs y URLs seguras de los videos
-	var publicIDs []string
-	var secureURLs []string
-
-	// Subir el video a Cloudinary y obtener el publicID y la URL segura
-	for _, videoURL := range content.VideosURL {
-		publicID, secureURL, err := utils.UploadVideoToCloudinary(videoURL)
-		if err != nil {
-			return err
-		}
-		// Agregar el publicID y la URL segura a los slices
-		publicIDs = append(publicIDs, publicID)
-		secureURLs = append(secureURLs, secureURL)
-	}
-
-	// Asignar los slices a la estructura de contenido
-	content.PublicIDCloudinary = publicIDs
-	content.VideosURL = secureURLs
 
 	_, err := collection.InsertOne(context.Background(), content)
 	if err != nil {
@@ -61,6 +44,7 @@ func GetAllCourses() ([]models.Courses, error) {
 		return nil, err
 	}
 	return course, nil
+
 }
 
 // update course

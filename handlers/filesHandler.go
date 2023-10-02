@@ -5,6 +5,7 @@ import (
 
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/services"
+	"github.com/Spacio-app/content-management-microservice/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -14,6 +15,18 @@ func CreateFile(c *fiber.Ctx) error {
 		log.Println("Error al analizar el cuerpo de la solicitud:", err)
 		return err
 	}
+	//Procesar y cargar archivos
+	if secureURL, publicID, err := utils.ProcessUploadedFiles(c, "FilesURL"); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al procesar archivos",
+		})
+	} else {
+		content.FilesURL = secureURL
+		content.PublicIDCloudinary = publicID
+		content.Miniature = secureURL[0]
+	}
+
+	log.Println("Creando un nuevo file...")
 
 	//enviar a servicio
 	err := services.CreateFile(content)

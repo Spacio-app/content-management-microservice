@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log"
-	"os"
 
 	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/cloudinary/cloudinary-go/v2/api/admin"
@@ -20,10 +19,10 @@ func InitCloudinary() (*cloudinary.Cloudinary, error) {
 	}
 
 	// Obtener credenciales de Cloudinary desde variables de entorno
-	apiKey := os.Getenv("CLOUDINARY_API_KEY")
-	apiSecret := os.Getenv("CLOUDINARY_API_SECRET")
-	cloudName := os.Getenv("CLOUDINARY_CLOUD_NAME")
-
+	apiKey := "564161591792583"
+	apiSecret := "En_yFQLYIpFpDHqKsWTn0u5L1C0"
+	cloudName := "ddmhgap5x"
+	log.Println("apiSecret", apiSecret)
 	// Crear una instancia de Cloudinary
 	cld, err := cloudinary.NewFromParams(cloudName, apiKey, apiSecret)
 	if err != nil {
@@ -34,15 +33,15 @@ func InitCloudinary() (*cloudinary.Cloudinary, error) {
 }
 
 // UploadVideoToCloudinary sube un video a Cloudinary y devuelve su publicID y URL segura.
-func UploadVideoToCloudinary(videoFile string) (string, string, error) {
+func UploadContentToCloudinary(file interface{}) (string, string, error) {
 	// Inicializar el cliente de Cloudinary
 	cld, err := InitCloudinary()
 	if err != nil {
 		return "", "", fmt.Errorf("Error inicializando el cliente de Cloudinary: %v", err)
 	}
-	log.Println("foto subida", videoFile)
+	log.Println("Contenido subido", file)
 	// Subir el video a Cloudinary
-	uploadResult, err := cld.Upload.Upload(context.TODO(), videoFile, uploader.UploadParams{})
+	uploadResult, err := cld.Upload.Upload(context.TODO(), file, uploader.UploadParams{})
 	if err != nil {
 		return "", "", fmt.Errorf("Error al subir el video a Cloudinary: %v", err)
 	}

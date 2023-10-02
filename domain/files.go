@@ -3,13 +3,16 @@ package domain
 import "time"
 
 type FileReq struct {
-	Title       string    `json:"Title" validate:"required"`
-	Description string    `json:"Description" validate:"required"`
-	ContentType string    `json:"ContentType" validate:"required"`
-	Author      string    `json:"Author" validate:"required"`
-	CreatedAt   time.Time `json:"createdat" validate:"required"`
-	UpdatedAt   time.Time `json:"updatedat" validate:"required"`
-	FilePath    string    `json:"filePath" validate:"required"`
+	ID                 string    `json:"id,omitempty" bson:"_id,omitempty"`
+	Title              string    `json:"Title" validate:"required"`
+	Description        string    `json:"Description" validate:"required"`
+	ContentType        string    `json:"ContentType" validate:"required"`
+	Author             string    `json:"Author" validate:"required"`
+	CreatedAt          time.Time `json:"createdat" validate:"required"`
+	UpdatedAt          time.Time `json:"updatedat" validate:"required"`
+	Miniature          string    `bson:"miniature" json:"miniature,omitempty"`
+	PublicIDCloudinary []string  `json:"PublicIDCloudinary" validate:"required"`
+	FilesURL           []string  `json:"FilesURL" validate:"required"`
 }
 
 // Función para establecer CreatedAt y UpdatedAt antes de insertar

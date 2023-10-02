@@ -1,11 +1,11 @@
 package handlers
 
 import (
-	"fmt"
 	"log"
 
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/services"
+	"github.com/Spacio-app/content-management-microservice/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -14,14 +14,29 @@ import (
 // validar datos de entrada
 func CreateCourse(c *fiber.Ctx) error {
 	// crear estructra de contenido de datos
+
 	content := domain.CourseReq{}
-	fmt.Println("content", c)
-	log.Println("Creando un nuevo curso...")
+
 	// Analizar el cuerpo de la solicitud y almacenar los datos en la estructura
 	if err := c.BodyParser(&content); err != nil {
 		log.Println("Error al analizar el cuerpo de la solicitud:", err)
 		return err
 	}
+
+	// Procesar y cargar archivos
+	if secureURL, publicID, err := utils.ProcessUploadedFiles(c, "VideosURL"); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al procesar archivos",
+		})
+	} else {
+		content.VideosURL = secureURL
+		content.PublicIDCloudinary = publicID
+		//secureURL primera imagen
+		content.Miniature = secureURL[0]
+
+	}
+
+	log.Println("Creando un nuevo curso...")
 
 	if err := services.CreateCourse(content); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
