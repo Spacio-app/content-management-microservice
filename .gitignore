@@ -2,7 +2,6 @@
 /tmp
 # .env
 
-cmd/.env
 *.exe
 *.exe~
 *.dll
