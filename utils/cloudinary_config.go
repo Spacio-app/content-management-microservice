@@ -15,7 +15,7 @@ import (
 func InitCloudinary() (*cloudinary.Cloudinary, error) {
 	// Cargar variables de entorno desde .env
 	if err := godotenv.Load(); err != nil {
-		return nil, fmt.Errorf("Error cargando variables de entorno: %v", err)
+		return nil, fmt.Errorf("error cargando el archivo .env: %v", err)
 	}
 
 	// Obtener credenciales de Cloudinary desde variables de entorno
@@ -26,7 +26,7 @@ func InitCloudinary() (*cloudinary.Cloudinary, error) {
 	// Crear una instancia de Cloudinary
 	cld, err := cloudinary.NewFromParams(cloudName, apiKey, apiSecret)
 	if err != nil {
-		return nil, fmt.Errorf("Error inicializando el cliente de Cloudinary: %v", err)
+		return nil, fmt.Errorf("error inicializando Cloudinary: %v", err)
 	}
 
 	return cld, nil
@@ -37,13 +37,13 @@ func UploadContentToCloudinary(file interface{}) (string, string, error) {
 	// Inicializar el cliente de Cloudinary
 	cld, err := InitCloudinary()
 	if err != nil {
-		return "", "", fmt.Errorf("Error inicializando el cliente de Cloudinary: %v", err)
+		return "", "", fmt.Errorf("error inicializando el cliente de Cloudinary: %v", err)
 	}
 	log.Println("Contenido subido", file)
 	// Subir el video a Cloudinary
 	uploadResult, err := cld.Upload.Upload(context.TODO(), file, uploader.UploadParams{})
 	if err != nil {
-		return "", "", fmt.Errorf("Error al subir el video a Cloudinary: %v", err)
+		return "", "", fmt.Errorf("error al subir el contenido a Cloudinary: %v", err)
 	}
 
 	// Obtener el publicID y la URL segura del video
@@ -63,7 +63,7 @@ func GetCloudinaryResourceDetails(publicID string) (*admin.AssetResult, error) {
 	// Obtener detalles del recurso por su PublicID
 	resp, err := cld.Admin.Asset(context.TODO(), admin.AssetParams{PublicID: publicID})
 	if err != nil {
-		return nil, fmt.Errorf("Error al obtener detalles del recurso en Cloudinary: %v", err)
+		return nil, fmt.Errorf("error al obtener detalles del recurso en Cloudinary: %v", err)
 	}
 
 	return resp, nil
@@ -79,10 +79,33 @@ func GetCloudinaryResourceURL(publicID string) (string, error) {
 	// Obtener detalles del recurso por su PublicID
 	resp, err := cld.Admin.Asset(context.TODO(), admin.AssetParams{PublicID: publicID})
 	if err != nil {
-		return "", fmt.Errorf("Error al obtener detalles del recurso en Cloudinary: %v", err)
+		return "", fmt.Errorf("error al obtener detalles del recurso en Cloudinary: %v", err)
 	}
 
 	return resp.SecureURL, nil
+}
+func DeleteContentFromCloudinary(publicIDs []string) error {
+	// Inicializar el cliente de Cloudinary
+	cld, err := InitCloudinary()
+	if err != nil {
+		return fmt.Errorf("error inicializando el cliente de Cloudinary: %v", err)
+	}
+
+	// Iterar sobre los publicIDs y eliminar los archivos correspondientes en Cloudinary
+	for _, publicID := range publicIDs {
+		// Eliminar el archivo de Cloudinary
+		_, err := cld.Upload.Destroy(context.TODO(), uploader.DestroyParams{
+			PublicID: publicID,
+		})
+		if err != nil {
+			log.Printf("Error al eliminar el archivo de Cloudinary con publicID %s: %v\n", publicID, err)
+			// Continuar con la eliminación de otros archivos en caso de error
+		} else {
+			log.Printf("Archivo de Cloudinary con publicID %s eliminado con éxito.\n", publicID)
+		}
+	}
+
+	return nil
 }
 
 // package utils

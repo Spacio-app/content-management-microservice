@@ -31,8 +31,8 @@ func CreateCourse(c *fiber.Ctx) error {
 	} else {
 		content.VideosURL = secureURL
 		content.PublicIDCloudinary = publicID
-		//secureURL primera imagen
-		content.Miniature = secureURL[0]
+		// //secureURL primera imagen
+		// content.Miniature = secureURL[0]
 
 	}
 
