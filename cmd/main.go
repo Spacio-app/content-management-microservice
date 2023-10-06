@@ -84,8 +84,11 @@ func main() {
 	}
 
 	// Iniciar el servidor
-	port := ":3001"
-	err = app.Listen(port)
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "3001" // Valor predeterminado en caso de que la variable de entorno no esté configurada
+	}
+	err = app.Listen(":" + port) // Agrega ":" antes del número del puerto
 	if err != nil {
 		fmt.Printf("Error al iniciar el servidor: %s\n", err)
 		return
