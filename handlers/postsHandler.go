@@ -16,16 +16,17 @@ func CreatePost(c *fiber.Ctx) error {
 		log.Println("Error al analizar el cuerpo de la solicitud:", err)
 		return err
 	}
-
+	isVideo := false
 	//Procesar y cargar archivos
-	if secureURL, publicID, err := utils.ProcessUploadedFiles(c, "ImagesURL"); err != nil {
+	if secureURL, publicID, miniature, err := utils.ProcessUploadedFiles(c, "ImagesURL", isVideo); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error al procesar archivos",
 		})
 	} else {
+		miniature = secureURL[0]
 		content.ImagesURL = secureURL
 		content.PublicIDCloudinary = publicID
-		content.Miniature = secureURL[0]
+		content.Miniature = miniature
 	}
 
 	log.Println("Creando un nuevo post...")

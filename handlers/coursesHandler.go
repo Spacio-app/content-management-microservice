@@ -23,8 +23,10 @@ func CreateCourse(c *fiber.Ctx) error {
 		return err
 	}
 
+	// Verificar si el contenido es un video
+	isVideo := true
 	// Procesar y cargar archivos
-	if secureURL, publicID, err := utils.ProcessUploadedFiles(c, "VideosURL"); err != nil {
+	if secureURL, publicID, miniature, err := utils.ProcessUploadedFiles(c, "VideosURL", isVideo); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error al procesar archivos",
 		})
@@ -32,7 +34,7 @@ func CreateCourse(c *fiber.Ctx) error {
 		content.VideosURL = secureURL
 		content.PublicIDCloudinary = publicID
 		// //secureURL primera imagen
-		// content.Miniature = secureURL[0]
+		content.Miniature = miniature
 
 	}
 
