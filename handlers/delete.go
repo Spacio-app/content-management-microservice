@@ -26,6 +26,9 @@ func DeleteContentHandler(c *fiber.Ctx) error {
 		})
 	}
 
+	// Verificar si el contenido es un video
+	isVideo := content.VideosURL != nil
+
 	// Elimina el contenido de la base de datos
 	err = services.DeleteContentByID(objectID)
 	if err != nil {
@@ -35,7 +38,7 @@ func DeleteContentHandler(c *fiber.Ctx) error {
 	}
 
 	// Llama a la función para eliminar el archivo de Cloudinary
-	err = utils.DeleteContentFromCloudinary(content.PublicIDCloudinary)
+	err = utils.DeleteContentFromCloudinary(content.PublicIDCloudinary, isVideo)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error al eliminar el archivo de Cloudinary",

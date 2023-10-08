@@ -84,18 +84,22 @@ func GetCloudinaryResourceURL(publicID string) (string, error) {
 
 	return resp.SecureURL, nil
 }
-func DeleteContentFromCloudinary(publicIDs []string) error {
+func DeleteContentFromCloudinary(publicIDs []string, isVideo bool) error {
 	// Inicializar el cliente de Cloudinary
 	cld, err := InitCloudinary()
 	if err != nil {
 		return fmt.Errorf("error inicializando el cliente de Cloudinary: %v", err)
 	}
-
+	resourceType := "image" // Valor predeterminado para imágenes
+	if isVideo {
+		resourceType = "video" // Cambiar a "video" si se trata de un video
+	}
 	// Iterar sobre los publicIDs y eliminar los archivos correspondientes en Cloudinary
 	for _, publicID := range publicIDs {
 		// Eliminar el archivo de Cloudinary
 		_, err := cld.Upload.Destroy(context.TODO(), uploader.DestroyParams{
-			PublicID: publicID,
+			PublicID:     publicID,
+			ResourceType: resourceType,
 		})
 		if err != nil {
 			log.Printf("Error al eliminar el archivo de Cloudinary con publicID %s: %v\n", publicID, err)

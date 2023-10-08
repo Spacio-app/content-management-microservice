@@ -35,8 +35,7 @@ func main() {
 	utils.InitCloudinary()
 	utils.InitDatabase()
 	// Crear instancia de Fiber
-	app := fiber.New()
-
+	app := fiber.New(fiber.Config{BodyLimit: 100 * 1024 * 1024})
 	// Configurar middleware CORS
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "*",
