@@ -1,15 +1,20 @@
 // class for courses implementing content interface
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type Courses struct {
 	AbstractContent    `bson:",inline" json:",inline"`
-	VideosTitles       []string `bson:"videostitle" json:"videostitle" validate:"required"`
-	VideosDescriptions []string `bson:"videosdescriptions" json:"videosdescriptions" validate:"required"`
-	PublicIDCloudinary []string `bson:"publicidcloudinary" json:"publicidcloudinary" validate:"required"`
-	VideosURL          []string `bson:"videosurl" json:"videosurl" validate:"required"`
+	PublicIDCloudinary []string     `bson:"publicidcloudinary" json:"publicidcloudinary" validate:"required"`
+	Videos             []VideosInfo `bson:"videos" json:"videos" validate:"required"`
 	// Otros campos que puedas necesitar
+}
+type VideosInfo struct {
+	Title       string `json:"title" validate:"required"`
+	Description string `json:"description" validate:"required"`
+	URL         string `json:"url" validate:"required"`
 }
 
 func (c *Courses) BeforeInsert() {

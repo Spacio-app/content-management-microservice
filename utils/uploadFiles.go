@@ -53,6 +53,8 @@ func ProcessUploadedFiles(c *fiber.Ctx, formField string, isVideo bool) ([]strin
 
 	files := form.File[formField]
 
+	// anotate los indices
+
 	filesURLs := []string{}
 	filesPublicIDs := []string{}
 
@@ -85,6 +87,7 @@ func ProcessUploadedFiles(c *fiber.Ctx, formField string, isVideo bool) ([]strin
 			return nil, nil, "", err
 		}
 	}
+
 	miniatureURL := ""
 	log.Printf("isVideo: %v\n", isVideo)
 	if isVideo {
