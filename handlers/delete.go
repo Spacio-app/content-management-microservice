@@ -7,7 +7,6 @@ import (
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
-// DeleteContentHandler maneja la solicitud para eliminar un registro de contenido por ID
 func DeleteContentHandler(c *fiber.Ctx) error {
 	idParam := c.Params("id")
 
@@ -27,7 +26,7 @@ func DeleteContentHandler(c *fiber.Ctx) error {
 	}
 
 	// Verificar si el contenido es un video
-	isVideo := content.VideosURL != nil
+	isVideo := content.Videos != nil
 
 	// Elimina el contenido de la base de datos
 	err = services.DeleteContentByID(objectID)

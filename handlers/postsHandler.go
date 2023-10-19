@@ -5,43 +5,42 @@ import (
 
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/services"
-	"github.com/Spacio-app/content-management-microservice/utils"
 	"github.com/gofiber/fiber/v2"
 )
 
-func CreatePost(c *fiber.Ctx) error {
+// func CreatePost(c *fiber.Ctx) error {
 
-	content := domain.PostReq{}
-	if err := c.BodyParser(&content); err != nil {
-		log.Println("Error al analizar el cuerpo de la solicitud:", err)
-		return err
-	}
-	isVideo := false
-	//Procesar y cargar archivos
-	if secureURL, publicID, miniature, err := utils.ProcessUploadedFiles(c, "ImagesURL", isVideo); err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error al procesar archivos",
-		})
-	} else {
-		miniature = secureURL[0]
-		content.ImagesURL = secureURL
-		content.PublicIDCloudinary = publicID
-		content.Miniature = miniature
-	}
+// 	content := domain.PostReq{}
+// 	if err := c.BodyParser(&content); err != nil {
+// 		log.Println("Error al analizar el cuerpo de la solicitud:", err)
+// 		return err
+// 	}
+// 	isVideo := false
+// 	//Procesar y cargar archivos
+// 	if secureURL, publicID, miniature, err := utils.ProcessUploadedFiles(c, "ImagesURL", isVideo); err != nil {
+// 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+// 			"error": "Error al procesar archivos",
+// 		})
+// 	} else {
+// 		miniature = secureURL[0]
+// 		content.ImagesURL = secureURL
+// 		content.PublicIDCloudinary = publicID
+// 		content.Miniature = miniature
+// 	}
 
-	log.Println("Creando un nuevo post...")
+// 	log.Println("Creando un nuevo post...")
 
-	//enviar a servicio
-	err := services.CreatePost(content)
-	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error al crear el post",
-		})
-	}
+// 	//enviar a servicio
+// 	err := services.CreatePost(content)
+// 	if err != nil {
+// 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+// 			"error": "Error al crear el post",
+// 		})
+// 	}
 
-	return c.JSON(content)
+// 	return c.JSON(content)
 
-}
+// }
 
 // get all posts
 func GetAllPostsHandler(c *fiber.Ctx) error {

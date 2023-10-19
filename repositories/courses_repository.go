@@ -90,23 +90,30 @@ func UpdateCourse(id primitive.ObjectID, content domain.CourseReq) error {
 // // Set the Cloudinary URL of the uploaded video link in your content structure
 // // content.VideosURL = uploadedVideoLinks
 
-// Function to upload video links to Cloudinary
 func uploadVideoLinksToCloudinary(cld *cloudinary.Cloudinary, content *domain.CourseReq) (*domain.CourseReq, error) {
 	var updatedVideosURL []string
 
-	for _, videoLink := range content.VideosURL {
+	for _, videoLink := range content.Videos {
 		// Upload the video link to Cloudinary
-		uploadResult, err := cld.Upload.Upload(context.TODO(), videoLink, uploader.UploadParams{})
+		uploadResult, err := cld.Upload.Upload(context.TODO(), videoLink.URL, uploader.UploadParams{})
 		if err != nil {
 			return nil, err
 		}
 
-		// Append the URL of the uploaded video link to the updatedVideosURL slice
-		updatedVideosURL = append(updatedVideosURL, uploadResult.SecureURL)
+		// Update the URL of the uploaded video link in your content structure
+		videoLink.URL = uploadResult.SecureURL
+
+		// Append the updated video link to the updatedVideosURL slice
+		updatedVideosURL = append(updatedVideosURL, videoLink.URL)
 	}
 
 	// Update the content structure with the Cloudinary URLs
-	content.VideosURL = updatedVideosURL
+	var updatedVideos []domain.VideoReq
+	for _, url := range updatedVideosURL {
+		video := domain.VideoReq{URL: url}
+		updatedVideos = append(updatedVideos, video)
+	}
+	content.Videos = updatedVideos
 
 	return content, nil
 }
