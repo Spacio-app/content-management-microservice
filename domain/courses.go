@@ -3,15 +3,14 @@ package domain
 import "time"
 
 type CourseReq struct {
-	ID                 string     `json:"id,omitempty"`
-	Title              string     `json:"Title" validate:"required"`
-	Description        string     `json:"Description" validate:"required"`
-	ContentType        string     `json:"ContentType" validate:"required"`
-	Author             string     `json:"Author" validate:"required"`
-	CreatedAt          time.Time  `json:"createdat,omitempty"`
-	UpdatedAt          time.Time  `json:"updatedat,omitempty"`
-	PublicIDCloudinary []string   `json:"PublicIDCloudinary" validate:"required"`
-	Videos             []VideoReq `json:"videos" validate:"required"`
+	ID          string     `json:"id,omitempty"`
+	Title       string     `json:"Title" validate:"required"`
+	Description string     `json:"Description" validate:"required"`
+	ContentType string     `json:"ContentType" validate:"required"`
+	Author      string     `json:"Author" validate:"required"`
+	CreatedAt   time.Time  `json:"createdat,omitempty"`
+	UpdatedAt   time.Time  `json:"updatedat,omitempty"`
+	Videos      []VideoReq `json:"videos" validate:"required"`
 }
 
 type VideoReq struct {

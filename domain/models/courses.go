@@ -11,11 +11,11 @@ type Courses struct {
 	// Otros campos que puedas necesitar
 }
 type Video struct {
-	Title              string   `json:"title" validate:"required"`
-	Description        string   `json:"desc" validate:"required"`
-	MiniatureVideo     string   `json:"miniatureVideo" validate:"required"`
-	URL                string   `json:"url" validate:"required"`
-	PublicIDCloudinary []string `bson:"publicidcloudinary" json:"publicidcloudinary" validate:"required"`
+	Title              string `json:"title" validate:"required"`
+	Description        string `json:"desc" validate:"required"`
+	MiniatureVideo     string `json:"miniatureVideo" validate:"required"`
+	URL                string `json:"url" validate:"required"`
+	PublicIDCloudinary string `bson:"publicidcloudinary" json:"publicidcloudinary" validate:"required"`
 }
 
 func (c *Courses) BeforeInsert() {

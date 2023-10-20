@@ -22,13 +22,18 @@ func CreateCourse(c *fiber.Ctx) error {
 	// }
 	title := c.FormValue("title")
 	description := c.FormValue("description")
-
+	author := c.FormValue("author")
 	content.Title = title
 	content.Description = description
+	content.Author = author
 	// // Handle the videos array
 	content.Videos = []domain.VideoReq{}
 
 	for i := 0; ; i++ {
+		// //verificar si hay mas videos
+		// if c.FormValue(fmt.Sprintf("videos[%d][title]", i)) == "" {
+		// 	break
+		// }
 		titleKey := fmt.Sprintf("videos[%d][title]", i)
 		descKey := fmt.Sprintf("videos[%d][desc]", i)
 		urlKey := fmt.Sprintf("videos[%d][url]", i)
@@ -63,7 +68,12 @@ func CreateCourse(c *fiber.Ctx) error {
 		content.Videos = append(content.Videos, video)
 		// videos = append(videos, video)
 	}
-
+	//enviar a servicio
+	if err := services.CreateCourse(content); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al crear el curso",
+		})
+	}
 	return c.JSON(content)
 }
 

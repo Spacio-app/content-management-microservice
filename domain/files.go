@@ -3,16 +3,19 @@ package domain
 import "time"
 
 type FileReq struct {
-	ID                 string    `json:"id,omitempty" bson:"_id,omitempty"`
-	Title              string    `json:"Title" validate:"required"`
-	Description        string    `json:"Description" validate:"required"`
-	ContentType        string    `json:"ContentType" validate:"required"`
-	Author             string    `json:"Author" validate:"required"`
-	CreatedAt          time.Time `json:"createdat" validate:"required"`
-	UpdatedAt          time.Time `json:"updatedat" validate:"required"`
-	Miniature          string    `bson:"miniature" json:"miniature,omitempty"`
-	PublicIDCloudinary []string  `json:"PublicIDCloudinary" validate:"required"`
-	FilesURL           []string  `json:"FilesURL" validate:"required"`
+	ID          string       `json:"id,omitempty" bson:"_id,omitempty"`
+	Title       string       `json:"Title" validate:"required"`
+	Description string       `json:"Description" validate:"required"`
+	ContentType string       `json:"ContentType" validate:"required"`
+	Author      string       `json:"Author" validate:"required"`
+	CreatedAt   time.Time    `json:"createdat" validate:"required"`
+	UpdatedAt   time.Time    `json:"updatedat" validate:"required"`
+	Miniature   string       `bson:"miniature" json:"miniature,omitempty"`
+	FilesURL    []FileURLReq `json:"filesURL" validate:"required"`
+}
+type FileURLReq struct {
+	FileURL            string `json:"fileURL" validate:"required"`
+	PublicIDCloudinary string `json:"publicidcloudinary,omitempty" validate:"required"`
 }
 
 // Función para establecer CreatedAt y UpdatedAt antes de insertar

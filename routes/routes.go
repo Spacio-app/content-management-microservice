@@ -15,8 +15,8 @@ import (
 func SetupRoutes(app *fiber.App) {
 
 	app.Post("/contentCourse", handlers.CreateCourse)
-	// app.Post("/contentPost", handlers.CreatePost)
-	// app.Post("/contentFile", handlers.CreateFile)
+	app.Post("/contentPost", handlers.CreatePost)
+	app.Post("/contentFile", handlers.CreateFile)
 	app.Post("/contentTest", handlers.CreateTest)
 
 	app.Get("/contentCourse/", handlers.GetAllCoursesHandler)
