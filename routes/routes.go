@@ -13,25 +13,32 @@ import (
 )
 
 func SetupRoutes(app *fiber.App) {
-
+	// Rutas para crear contenido
 	app.Post("/contentCourse", handlers.CreateCourse)
 	app.Post("/contentPost", handlers.CreatePost)
 	app.Post("/contentFile", handlers.CreateFile)
 	app.Post("/contentTest", handlers.CreateTest)
 
-	app.Get("/contentCourse/", handlers.GetAllCoursesHandler)
-	app.Get("/contentPost/", handlers.GetAllPostsHandler)
-	app.Get("/contentFile/", handlers.GetAllFilesHandler)
-	app.Get("/contentTest/", handlers.GetAllTestsHandler)
+	// Rutas para obtener contenido
+	app.Get("/contentCourse", handlers.GetAllCoursesHandler)
+	app.Get("/contentPost", handlers.GetAllPostsHandler)
+	app.Get("/contentFile", handlers.GetAllFilesHandler)
+	app.Get("/contentTest", handlers.GetAllTestsHandler)
 
+	// Rutas para actualizar contenido
 	app.Patch("/contentCourse/:id", handlers.UpdateCourseHandler)
 	app.Put("/contentPost/:id", handlers.UpdatePostHandler)
 	app.Put("/contentFile/:id", handlers.UpdateFileHandler)
 	app.Put("/contentTest/:id", handlers.UpdateTestHandler)
 
+	// Rutas para obtener contenido por ID
 	app.Get("/Content/:id", handlers.GetContentByIDHandler)
-	app.Get("/Content", handlers.GetAllContentHandler)
 
+	// Rutas para obtener un feed de contenido
+	app.Get("/ContentFeed", handlers.GetContentFeedHandler)
+	app.Get("/ContentFeedMore", handlers.GetContentFeedMoreHandler)
+
+	// Ruta para eliminar contenido
 	app.Delete("/Content/:id", handlers.DeleteContentHandler)
 	// Agregar otras rutas para actualizar, eliminar y otras operaciones...
 }
