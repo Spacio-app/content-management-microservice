@@ -8,42 +8,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-// func ProcessUploadedFiles(c *fiber.Ctx, formField string) ([]string, []string, error) {
-// 	// Accede a los archivos cargados
-// 	form, err := c.MultipartForm()
-// 	if err != nil {
-// 		return nil, nil, err
-// 	}
-
-// 	files := form.File[formField]
-
-// 	filesURLS := []string{}
-// 	filesIDs := []string{}
-
-// 	for _, file := range files {
-// 		// Abra el archivo
-// 		src, err := file.Open()
-// 		if err != nil {
-// 			return nil, nil, err
-// 		}
-// 		defer src.Close()
-
-// 		// Procesa el archivo y carga en Cloudinary (ajusta según tu función)
-// 		publicID, secureURL, err := UploadContentToCloudinary(src)
-
-// 		filesURLS = append(filesURLS, secureURL)
-// 		filesIDs = append(filesIDs, publicID)
-
-// 		if err != nil {
-// 			return nil, nil, err
-// 		}
-
-// 	}
-
-// 	return filesURLS, filesIDs, err
-// }
-
-func ProcessUploadedFiles(c *fiber.Ctx, file *multipart.FileHeader, isVideo bool) (string, string, string, error) {
+func ProcessUploadedFiles(c *fiber.Ctx, file *multipart.FileHeader, isVideo bool, miniature *multipart.FileHeader) (string, string, string, string, error) {
 
 	// Abra el archivo
 	src, err := file.Open()
@@ -52,16 +17,25 @@ func ProcessUploadedFiles(c *fiber.Ctx, file *multipart.FileHeader, isVideo bool
 	}
 	defer src.Close()
 
-	// // Obtener la extensión original del archivo
-	// extension := filepath.Ext(file.Filename)
+	//abrir miniatura
+	srcMiniature, err := miniature.Open()
+	if err != nil {
+		miniatureURL := ""
+	}
+	defer srcMiniature.Close()
 
-	// //transformar todo lo que no sea imagen o video a pdf
-	// if extension != ".png" && extension != ".jpg" && extension != ".jpeg" && extension != ".mp4" && extension != ".mov" && extension != ".avi" && extension != ".mkv" && extension != ".webm" {
-	// 	extension = ".pdf"
-	// }
+	if srcMiniature != nil {
+		// Procesa el archivo y carga en Cloudinary
+		PublicIDMiniature, miniatureURL, err := UploadContentToCloudinary(srcMiniature)
+		if err != nil {
+			miniatureURL := ""
+		}
+	}
+	else {
+		miniatureURL := ""
+	}
 
-	// // Generar un nombre único para el archivo en Cloudinary
-	// publicID := generateUniqueName() + extension
+
 
 	// Procesa el archivo y carga en Cloudinary
 	publicID, secureURL, err := UploadContentToCloudinary(src)
@@ -70,9 +44,14 @@ func ProcessUploadedFiles(c *fiber.Ctx, file *multipart.FileHeader, isVideo bool
 		return "", "", "", err
 	}
 
-	miniatureURL := ""
+	//preguntar si miniatureURL es nulo
+	if miniatureURL != nil {
+		return secureURL, publicID, miniatureURL, PublicIDMiniature, nil
+	}
+	
 	log.Printf("isVideo: %v\n", isVideo)
 	if isVideo {
+		miniatureURL := ""
 		firstVideoURL := secureURL
 		// log.Println("firstVideoURL", firstVideoURL)
 		// fmt.Println("firstVideoURL", firstVideoURL)
@@ -93,18 +72,3 @@ func ProcessUploadedFiles(c *fiber.Ctx, file *multipart.FileHeader, isVideo bool
 	return secureURL, publicID, miniatureURL, nil
 }
 
-// func generateUniqueName() string {
-// 	// Generate a new UUID
-// 	id := uuid.New()
-
-// 	// Convert the UUID to a string
-// 	idStr := id.String()
-
-// 	// Output the generated UUID for verification
-// 	fmt.Printf("UUID generated: %s\n", idStr)
-
-// 	// You can add any additional logic here if needed
-
-// 	// Return the UUID string as a unique name
-// 	return idStr
-// }

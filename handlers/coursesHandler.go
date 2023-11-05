@@ -34,6 +34,45 @@ func CreateCourse(c *fiber.Ctx) error {
 		// if c.FormValue(fmt.Sprintf("videos[%d][title]", i)) == "" {
 		// 	break
 		// }
+		//primera iteracion preguntar si hay miniatura
+		if i == 0 {
+			miniature, err := c.FormFile("miniature")
+			titleKey := fmt.Sprintf("videos[%d][title]", i)
+			descKey := fmt.Sprintf("videos[%d][desc]", i)
+			urlKey := fmt.Sprintf("videos[%d][url]", i)
+
+			title := c.FormValue(titleKey)
+			desc := c.FormValue(descKey)
+			file, err := c.FormFile(urlKey)
+
+			if title == "" && desc == "" && err != nil {
+				// No more videos to process
+				break
+			}
+
+			isVideo := true
+
+			secureURLs, publicIDs, miniatureURL, err := utils.ProcessUploadedFiles(c, file, isVideo, miniature)
+			if err != nil {
+				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+					"error": "Error al procesar archivos",
+				})
+			}
+
+			// Create a video struct to hold title, desc, and file info
+			video := domain.VideoReq{
+				Title:              title,
+				Description:        desc,
+				MiniatureVideo:     miniatureURL,
+				PublicIDCloudinary: publicIDs,
+				URL:                secureURLs,
+				// You may need to define a 'File' field in your Video struct
+			}
+			content.Videos = append(content.Videos, video)
+			// videos = append(videos, video)
+
+		}
+
 		titleKey := fmt.Sprintf("videos[%d][title]", i)
 		descKey := fmt.Sprintf("videos[%d][desc]", i)
 		urlKey := fmt.Sprintf("videos[%d][url]", i)
@@ -49,7 +88,7 @@ func CreateCourse(c *fiber.Ctx) error {
 
 		isVideo := true
 
-		secureURLs, publicIDs, miniatureURL, err := utils.ProcessUploadedFiles(c, file, isVideo)
+		secureURLs, publicIDs, miniatureURL, err := utils.ProcessUploadedFiles(c, file, isVideo, nil)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"error": "Error al procesar archivos",

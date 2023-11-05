@@ -39,9 +39,12 @@ func GetAllContent() ([]models.GenericContent, error) {
 	}
 	return content, nil
 }
-func GetContentFeedOrderByDate(skip, limit int) ([]models.GenericContent, error) {
+func GetContentFeedOrderByDate(skip int, limitInt int) ([]models.GenericContent, error) {
 	//
-	return repositories.GetContentFeedOrderByDate(skip, limit)
+	return repositories.GetContentFeedOrderByDate(skip, limitInt)
+}
+func GetContentByAuthor(author string) ([]models.GenericContent, error) {
+	return repositories.GetContentByAuthor(author)
 }
 func GetAllCourses() ([]models.Courses, error) {
 	courses, err := repositories.GetAllCourses()

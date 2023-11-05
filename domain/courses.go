@@ -19,6 +19,7 @@ type VideoReq struct {
 	MiniatureVideo     string `json:"miniatureVideo"`
 	URL                string `json:"url" validate:"required"`
 	PublicIDCloudinary string `json:"publicidcloudinary"`
+	PublicIDMiniature  string `json:"publicidminiature"`
 }
 
 // Función para establecer CreatedAt y UpdatedAt antes de insertar

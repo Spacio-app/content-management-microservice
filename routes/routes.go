@@ -33,10 +33,11 @@ func SetupRoutes(app *fiber.App) {
 
 	// Rutas para obtener contenido por ID
 	app.Get("/Content/:id", handlers.GetContentByIDHandler)
+	app.Get("/contentByAuthor/:author", handlers.GetContentByAuthorHandler)
 
 	// Rutas para obtener un feed de contenido
 	app.Get("/ContentFeed", handlers.GetContentFeedHandler)
-	app.Get("/ContentFeedMore", handlers.GetContentFeedMoreHandler)
+	app.Get("/ContentFeedMore", handlers.GetContentFeedHandler)
 
 	// Ruta para eliminar contenido
 	app.Delete("/Content/:id", handlers.DeleteContentHandler)

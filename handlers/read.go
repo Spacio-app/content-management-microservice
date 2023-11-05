@@ -40,11 +40,11 @@ func GetAllContentHandler(c *fiber.Ctx) error {
 	return c.JSON(content)
 }
 func GetContentFeedHandler(c *fiber.Ctx) error {
-	//obtener parametros de paginacion y ordenamiento
-	page := c.Query("page", "1") //pagina por defecto 1
-	limit := c.Query("limit", "10")
+	// Obtener los parámetros de paginación y ordenamiento
+	page := c.Query("page", "1") // Página predeterminada: 1
+	limit := c.Query("limit", "5")
 
-	//calcula el numero de documentos a saltar
+	// Calcular el número de documentos a saltar
 	pageInt, err := strconv.Atoi(page)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -57,12 +57,29 @@ func GetContentFeedHandler(c *fiber.Ctx) error {
 			"error": "Error al obtener el contenido",
 		})
 	}
+
+	// Calcular el valor de "skip" basado en la página y el límite
 	skip := (pageInt - 1) * limitInt
-	//realizar la consulta
+
+	// Realizar la consulta usando el mismo servicio
 	content, err := services.GetContentFeedOrderByDate(skip, limitInt)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error al obtener el feed de contenido",
+		})
+	}
+
+	// Devolver los datos como respuesta JSON
+	return c.JSON(content)
+}
+func GetContentByAuthorHandler(c *fiber.Ctx) error {
+	author := c.Params("author")
+
+	// Llama a tu función en el servicio que obtiene el contenido por autor
+	content, err := services.GetContentByAuthor(author)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el contenido del autor",
 		})
 	}
 

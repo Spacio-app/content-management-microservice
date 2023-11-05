@@ -16,6 +16,7 @@ type Video struct {
 	MiniatureVideo     string `json:"miniatureVideo" validate:"required"`
 	URL                string `json:"url" validate:"required"`
 	PublicIDCloudinary string `bson:"publicidcloudinary" json:"publicidcloudinary" validate:"required"`
+	PublicIDMiniature  string `bson:"publicidminiature,omitempty" json:"publicidminiature"`
 }
 
 func (c *Courses) BeforeInsert() {

@@ -38,7 +38,7 @@ func CreatePost(c *fiber.Ctx) error {
 			})
 		}
 
-		secureURL, publicID, _, err := utils.ProcessUploadedFiles(c, image, isVideo)
+		secureURL, publicID, _, err := utils.ProcessUploadedFiles(c, image, isVideo, nil)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"error": "Error al procesar archivos",
