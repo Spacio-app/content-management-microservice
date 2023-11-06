@@ -15,9 +15,19 @@ func CreateFile(c *fiber.Ctx) error {
 
 	title := c.FormValue("title")
 	description := c.FormValue("description")
-	author := c.FormValue("author")
 	content.Title = title
 	content.Description = description
+	user, error := getUserHeader(c)
+	if error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el usuario",
+		})
+	}
+	author := domain.AuthorReq{
+		Name:  user.Name,
+		Photo: user.Image,
+	}
+
 	content.Author = author
 	content.FilesURL = []domain.FileURLReq{}
 	isVideo := false

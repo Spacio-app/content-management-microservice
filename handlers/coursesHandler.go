@@ -41,10 +41,12 @@ func CreateCourse(c *fiber.Ctx) error {
 			"error": "Error al obtener el usuario",
 		})
 	}
-	content.Author = domain.AuthorReq{
+	author := domain.AuthorReq{
 		Name:  user.Name,
 		Photo: user.Image,
 	}
+
+	content.Author = author
 
 	// // Handle the videos array
 	content.Videos = []domain.VideoReq{}

@@ -25,10 +25,12 @@ func CreatePost(c *fiber.Ctx) error {
 			"error": "Error al obtener el usuario",
 		})
 	}
-	content.Author = domain.AuthorReq{
+	author := domain.AuthorReq{
 		Name:  user.Name,
 		Photo: user.Image,
 	}
+
+	content.Author = author
 	// Procesar las imágenes
 	isVideo := false
 

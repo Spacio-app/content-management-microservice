@@ -20,10 +20,12 @@ func CreateTest(c *fiber.Ctx) error {
 			"error": "Error al obtener el usuario",
 		})
 	}
-	content.Author = domain.AuthorReq{
+	author := domain.AuthorReq{
 		Name:  user.Name,
 		Photo: user.Image,
 	}
+
+	content.Author = author
 	//enviar a servicio
 	err := services.CreateTest(content)
 	if err != nil {
