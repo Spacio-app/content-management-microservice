@@ -1,6 +1,8 @@
 // class for courses implementing content interface
 package models
 
+import "time"
+
 type GenericContent struct {
 	AbstractContent `bson:",inline" json:",inline"`
 	Miniature       string         `bson:"miniature" json:"miniature,omitempty"`
@@ -11,4 +13,16 @@ type GenericContent struct {
 	Feed            []Feed         `bson:"feed" json:"feed,omitempty"`
 	FeedComments    []FeedComments `bson:"feedComments" json:"feedComments,omitempty"`
 	// Otros campos que puedas necesitar
+}
+
+func (c *GenericContent) BeforeInsert() {
+	currentTime := time.Now()
+	c.CreatedAt = currentTime
+	c.UpdatedAt = currentTime
+}
+
+// Función para actualizar UpdatedAt antes de actualizar
+func (c *GenericContent) BeforeUpdate() {
+	currentTime := time.Now()
+	c.UpdatedAt = currentTime
 }

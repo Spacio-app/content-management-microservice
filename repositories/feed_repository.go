@@ -26,37 +26,56 @@ func CreateFeed(content domain.FeedReq) error {
 	}
 	return nil
 }
-func UpdatePostComments(objectID primitive.ObjectID, updatedComments []domain.FeedCommentsReq) error {
+func UpdatePostComments(objectID primitive.ObjectID, comment domain.FeedCommentsReq) error {
 	// Buscar el post por su ID
-	existingPost, err := GetContentByID(objectID)
+	existingPost, err := GetContentByIDFeed(objectID)
 	if err != nil {
 		return err
 	}
+	log.Printf("existingPost: %v\n", existingPost)
+	// Convertir los comentarios actualizados a modelos de comentarios
+	var updatedCommentsModel []models.FeedComments
 
-	// Iterar sobre los comentarios actualizados y agregarlos al post existente
-	for _, comment := range updatedComments {
-		commentModel := models.FeedComments{
-			Comment:     comment.Comment,
-			Author:      comment.Author.Name,
-			AuthorPhoto: comment.Author.Photo,
-		}
-		commentModel.BeforeInsert() // Actualiza createdAt y updatedAt antes de insertar
-		existingPost.FeedComments = append(existingPost.FeedComments, commentModel)
+	//author model
+	authormodel := models.Author{
+		Name:  comment.Author.Name,
+		Photo: comment.Author.Photo,
 	}
+
+	commentModel := models.FeedComments{
+		Comment: comment.Comment,
+		Author:  authormodel,
+	}
+	commentModel.BeforeInsert() // Actualiza createdAt y updatedAt antes de insertar
+
+	log.Printf("updatedCommentsModel: %v\n", updatedCommentsModel)
+	log.Printf("existingPost: %v\n", existingPost)
+	log.Printf("por aqui pase")
+	log.Println("updatedCommentsModel", commentModel)
+	fmt.Println("existingPost", existingPost)
+
+	// Actualizar los comentarios del post
+	// existingPost.BeforeUpdate() // Actualiza createdAt y updatedAt antes de insertar
+	existingPost.Comments = append(existingPost.Comments, commentModel)
 
 	// Actualizar el post en la base de datos
 	err = UpdateFeedComments(objectID, existingPost)
 	if err != nil {
+		fmt.Println(err)
 		return err
 	}
 
 	return nil
 }
 
-func UpdateFeedComments(objectID primitive.ObjectID, updatedPost models.GenericContent) error {
+func UpdateFeedComments(objectID primitive.ObjectID, updatedPost models.Feed) error {
 	// Actualizar el post en la base de datos
 	collection := utils.GetCollection("Feed")
-	_, err := collection.UpdateOne(context.Background(), bson.M{"_id": objectID}, bson.M{"$set": updatedPost})
+	filter := bson.M{"_id": objectID}
+	_, err := collection.UpdateOne(context.Background(), filter,
+		bson.M{"$set": bson.M{
+			"comments": updatedPost.Comments,
+		}})
 	if err != nil {
 		return err
 	}

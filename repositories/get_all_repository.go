@@ -79,3 +79,14 @@ func GetContentByAuthor(author string) ([]models.GenericContent, error) {
 
 	return content, nil
 }
+
+func GetContentByIDFeed(id primitive.ObjectID) (models.Feed, error) {
+	collection := utils.GetCollection("Feed")
+	var content models.Feed
+	filter := bson.M{"_id": id}
+	err := collection.FindOne(context.Background(), filter).Decode(&content)
+	if err != nil {
+		return content, err
+	}
+	return content, nil
+}

@@ -52,7 +52,7 @@ func UpdatePostComments(c *fiber.Ctx) error {
 
 	fmt.Println("postID", postID)
 	// Obtener los nuevos datos del array de comentarios del cuerpo de la solicitud
-	var updatedComments []domain.FeedCommentsReq
+	// var updatedComments domain.FeedCommentsReq
 
 	var comment1 domain.FeedCommentsReq
 	if err := c.BodyParser(&comment1); err != nil {
@@ -69,6 +69,7 @@ func UpdatePostComments(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error al procesar el usuario",
 		})
+
 	}
 
 	// Crear un nuevo comentario con el autor adecuado
@@ -84,17 +85,14 @@ func UpdatePostComments(c *fiber.Ctx) error {
 	}
 
 	// Agregar el nuevo comentario a la lista de comentarios actualizados
-	updatedComments = append(updatedComments, comment)
-	fmt.Println("updatedComments", updatedComments)
 
 	// Llamar a un servicio para actualizar los comentarios del post
-	if err := services.UpdatePostComments(postID, updatedComments); err != nil {
+	if err := services.UpdatePostComments(postID, comment); err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error updating comments",
+			"error": "Error al actualizar los comentarios del post",
 		})
 	}
-
-	return c.JSON(updatedComments)
+	return c.JSON(comment)
 }
 
 func GetAllFeedsHandler(c *fiber.Ctx) error {

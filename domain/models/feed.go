@@ -5,16 +5,13 @@ import "time"
 type Feed struct {
 	AbstractContent `bson:",inline" json:",inline"`
 	ContentID       string         `bson:"content_id" json:"content_id"`
-	AuthorPhoto     string         `bson:"author_photo" json:"author_photo"`
 	Comments        []FeedComments `bson:"comments" json:"comments"`
 }
 type FeedComments struct {
-	AuthorID    string    `bson:"author_id" json:"author_id"`
-	Author      string    `bson:"author" json:"author"`
-	AuthorPhoto string    `bson:"author_photo" json:"author_photo"`
-	Comment     string    `bson:"comment" json:"comment"`
-	CreatedAt   time.Time `bson:"created_at" json:"created_at"`
-	UpdatedAt   time.Time `bson:"updated_at" json:"updated_at"`
+	Author    Author    `bson:"author" json:"author"`
+	Comment   string    `bson:"comment" json:"comment"`
+	CreatedAt time.Time `bson:"created_at" json:"created_at"`
+	UpdatedAt time.Time `bson:"updated_at" json:"updated_at"`
 }
 
 func (c *Feed) BeforeInsert() {

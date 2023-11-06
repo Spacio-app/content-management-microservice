@@ -31,16 +31,16 @@ func CreateTest(content domain.TestReq) error {
 func CreateFeed(content domain.FeedReq) error {
 	return repositories.CreateFeed(content)
 }
-func UpdatePostComments(id string, updatedComments []domain.FeedCommentsReq) error {
+
+func UpdatePostComments(id string, comment domain.FeedCommentsReq) error {
 	objectID, err := primitive.ObjectIDFromHex(id)
+	log.Println("objectID", objectID)
+	log.Println("updatedComments service", comment)
 	if err != nil {
 		return errors.New("ID inválido")
 	}
-	_, err = repositories.GetContentByID(objectID)
-	if err != nil {
-		return errors.New("el contenido no existe")
-	}
-	return repositories.UpdatePostComments(objectID, updatedComments)
+	return repositories.UpdatePostComments(objectID, comment)
+
 }
 func GetAllFeeds() ([]models.Feed, error) {
 	feeds, err := repositories.GetAllFeeds()
