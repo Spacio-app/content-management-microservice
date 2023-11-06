@@ -27,16 +27,6 @@ func CreateCourse(c *fiber.Ctx) error {
 	// 	log.Println("Error al analizar el cuerpo de la solicitud:", err)
 	// 	return err
 	// }
-	UserHeader := c.Get("User")
-
-	var user User
-
-	if err := json.Unmarshal([]byte(UserHeader), &user); err != nil {
-		fmt.Println("Error:", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error al procesar el usuario",
-		})
-	}
 
 	// fmt.Println("headers USER", User)
 
@@ -45,6 +35,12 @@ func CreateCourse(c *fiber.Ctx) error {
 	// author := c.FormValue("author")
 	content.Title = title
 	content.Description = description
+	user, error := getUserHeader(c)
+	if error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el usuario",
+		})
+	}
 	content.Author = domain.AuthorReq{
 		Name:  user.Name,
 		Photo: user.Image,
@@ -224,4 +220,16 @@ func UpdateCourseHandler(c *fiber.Ctx) error {
 		})
 	}
 	return c.JSON(content)
+}
+
+func getUserHeader(c *fiber.Ctx) (User, error) {
+	UserHeader := c.Get("User")
+
+	var user User
+
+	if err := json.Unmarshal([]byte(UserHeader), &user); err != nil {
+		fmt.Println("Error:", err)
+		return user, err
+	}
+	return user, nil
 }

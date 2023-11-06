@@ -16,11 +16,19 @@ func CreatePost(c *fiber.Ctx) error {
 	// Acceder a los campos del formulario
 	title := c.FormValue("title")
 	description := c.FormValue("description")
-	author := c.FormValue("author")
 	// Asignar los valores de título y descripción
 	content.Title = title
 	content.Description = description
-	content.Author = author
+	user, error := getUserHeader(c)
+	if error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el usuario",
+		})
+	}
+	content.Author = domain.AuthorReq{
+		Name:  user.Name,
+		Photo: user.Image,
+	}
 	// Procesar las imágenes
 	isVideo := false
 

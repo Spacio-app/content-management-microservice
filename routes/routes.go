@@ -28,7 +28,7 @@ func SetupRoutes(app *fiber.App) {
 	app.Get("/contentFile", handlers.GetAllFilesHandler)
 	app.Get("/contentTest", handlers.GetAllTestsHandler)
 
-	app.Get("/contentFeed", handlers.GetAllFeedsHandler)
+	app.Get("/contentFeed", handlers.GetContentFeedHandler)
 	// Rutas para actualizar contenido
 	app.Patch("/contentCourse/:id", handlers.UpdateCourseHandler)
 	app.Put("/contentPost/:id", handlers.UpdatePostHandler)

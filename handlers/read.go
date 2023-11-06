@@ -2,6 +2,7 @@
 package handlers
 
 import (
+	"fmt"
 	"strconv"
 
 	"github.com/Spacio-app/content-management-microservice/services"
@@ -32,6 +33,7 @@ func GetContentByIDHandler(c *fiber.Ctx) error {
 func GetAllContentHandler(c *fiber.Ctx) error {
 	content, err := services.GetAllContent()
 	if err != nil {
+		fmt.Println(err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error al obtener el contenido",
 		})

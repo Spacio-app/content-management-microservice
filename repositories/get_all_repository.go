@@ -42,7 +42,7 @@ func GetContentFeedOrderByDate(skip int, limitInt int) ([]models.Feed, error) {
 	collection := utils.GetCollection("Feed")
 
 	options := options.Find()
-	options.SetSort(bson.M{"createdat": 1}) // Ordenar por fecha de creación
+	options.SetSort(bson.M{"createdat": -1}) // Ordenar por fecha de creación
 	options.SetSkip(int64(skip))
 	options.SetLimit(int64(limitInt)) // Aplicar el límite
 

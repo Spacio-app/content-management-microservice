@@ -58,9 +58,9 @@ func main() {
 	routes.SetupRoutes(app)
 
 	// Obtener una referencia a la colección
-	collection := utils.GetCollection("Fee") // <colección>
+	collection := utils.GetCollection("Feed") // <colección>
 
-	// Consulta
+	// Consultad
 	// filter := bson.M{"campo": "valor"}
 	filter := bson.M{} // <filtro>
 	cursor, err := collection.Find(context.Background(), filter)

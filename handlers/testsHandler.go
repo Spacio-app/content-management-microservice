@@ -14,6 +14,16 @@ func CreateTest(c *fiber.Ctx) error {
 		log.Println("Error al analizar el cuerpo de la solicitud:", err)
 		return err
 	}
+	user, error := getUserHeader(c)
+	if error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el usuario",
+		})
+	}
+	content.Author = domain.AuthorReq{
+		Name:  user.Name,
+		Photo: user.Image,
+	}
 	//enviar a servicio
 	err := services.CreateTest(content)
 	if err != nil {

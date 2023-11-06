@@ -55,6 +55,7 @@ func GetContentByID(id primitive.ObjectID) (models.GenericContent, error) {
 func GetAllContent() ([]models.GenericContent, error) {
 	content, err := repositories.GetAllContent()
 	if err != nil {
+		fmt.Println(err)
 		return nil, errors.New("error al obtener el contenido")
 	}
 	return content, nil
@@ -67,11 +68,7 @@ func GetContentByAuthor(author string) ([]models.GenericContent, error) {
 	return repositories.GetContentByAuthor(author)
 }
 func GetAllCourses() ([]models.Courses, error) {
-	courses, err := repositories.GetAllCourses()
-	if err != nil {
-		return nil, errors.New("error al obtener los cursos")
-	}
-	return courses, nil
+	return repositories.GetAllCourses()
 }
 func GetAllPosts() ([]models.Posts, error) {
 	return repositories.GetAllPosts()
