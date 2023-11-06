@@ -38,8 +38,8 @@ func GetAllContent() ([]models.GenericContent, error) {
 	fmt.Println("content", content)
 	return content, nil
 }
-func GetContentFeedOrderByDate(skip int, limitInt int) ([]models.GenericContent, error) {
-	collection := utils.GetCollection("Content")
+func GetContentFeedOrderByDate(skip int, limitInt int) ([]models.Feed, error) {
+	collection := utils.GetCollection("Feed")
 
 	options := options.Find()
 	options.SetSort(bson.M{"createdat": 1}) // Ordenar por fecha de creación
@@ -52,7 +52,7 @@ func GetContentFeedOrderByDate(skip int, limitInt int) ([]models.GenericContent,
 	}
 	defer cursor.Close(context.Background())
 
-	var content []models.GenericContent
+	var content []models.Feed
 	if err := cursor.All(context.Background(), &content); err != nil {
 		return nil, err
 	}

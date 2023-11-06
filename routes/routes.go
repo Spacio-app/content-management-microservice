@@ -19,12 +19,16 @@ func SetupRoutes(app *fiber.App) {
 	app.Post("/contentFile", handlers.CreateFile)
 	app.Post("/contentTest", handlers.CreateTest)
 
+	app.Post("/createFeed", handlers.CreateFeed)
+	app.Patch("/posts/:postID/comments", handlers.UpdatePostComments)
+
 	// Rutas para obtener contenido
 	app.Get("/contentCourse", handlers.GetAllCoursesHandler)
 	app.Get("/contentPost", handlers.GetAllPostsHandler)
 	app.Get("/contentFile", handlers.GetAllFilesHandler)
 	app.Get("/contentTest", handlers.GetAllTestsHandler)
 
+	app.Get("/contentFeed", handlers.GetAllFeedsHandler)
 	// Rutas para actualizar contenido
 	app.Patch("/contentCourse/:id", handlers.UpdateCourseHandler)
 	app.Put("/contentPost/:id", handlers.UpdatePostHandler)
@@ -38,6 +42,7 @@ func SetupRoutes(app *fiber.App) {
 	// Rutas para obtener un feed de contenido
 	app.Get("/ContentFeed", handlers.GetContentFeedHandler)
 	app.Get("/ContentFeedMore", handlers.GetContentFeedHandler)
+	app.Get("/Content", handlers.GetAllContentHandler)
 
 	// Ruta para eliminar contenido
 	app.Delete("/Content/:id", handlers.DeleteContentHandler)

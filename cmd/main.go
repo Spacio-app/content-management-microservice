@@ -39,8 +39,8 @@ func main() {
 	// Configurar middleware CORS
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "*",
-		AllowHeaders: "Origin, Content-Type, Accept",
-		AllowMethods: "GET, POST, PUT, DELETE",
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization, User",
+		AllowMethods: "GET, POST, PUT, DELETE, PATCH",
 	}))
 	// app.Use(middleware.SessionValidationMiddleware())
 
@@ -58,7 +58,7 @@ func main() {
 	routes.SetupRoutes(app)
 
 	// Obtener una referencia a la colección
-	collection := utils.GetCollection("Content") // <colección>
+	collection := utils.GetCollection("Fee") // <colección>
 
 	// Consulta
 	// filter := bson.M{"campo": "valor"}

@@ -35,7 +35,7 @@ func CreateFile(c *fiber.Ctx) error {
 		}
 
 		// Procesar y cargar archivos
-		secureURL, publicID, miniature, err := utils.ProcessUploadedFiles(c, file, isVideo, nil)
+		secureURL, publicID, _, _, err := utils.ProcessUploadedFiles(c, file, isVideo, nil)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"error": "Error al procesar archivos",
@@ -52,7 +52,6 @@ func CreateFile(c *fiber.Ctx) error {
 		content.FilesURL = append(content.FilesURL, newFileURL)
 
 		// Actualizar el campo Miniature (deberías considerar cómo gestionar este campo)
-		content.Miniature = miniature
 
 		log.Printf("Creando un nuevo archivo (índice %d)...\n", i)
 	}

@@ -28,7 +28,27 @@ func CreateFile(content domain.FileReq) error {
 func CreateTest(content domain.TestReq) error {
 	return repositories.CreateTest(content)
 }
-
+func CreateFeed(content domain.FeedReq) error {
+	return repositories.CreateFeed(content)
+}
+func UpdatePostComments(id string, updatedComments []domain.FeedCommentsReq) error {
+	objectID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return errors.New("ID inválido")
+	}
+	_, err = repositories.GetContentByID(objectID)
+	if err != nil {
+		return errors.New("el contenido no existe")
+	}
+	return repositories.UpdatePostComments(objectID, updatedComments)
+}
+func GetAllFeeds() ([]models.Feed, error) {
+	feeds, err := repositories.GetAllFeeds()
+	if err != nil {
+		return nil, errors.New("error al obtener el contenido")
+	}
+	return feeds, nil
+}
 func GetContentByID(id primitive.ObjectID) (models.GenericContent, error) {
 	return repositories.GetContentByID(id)
 }
@@ -39,7 +59,7 @@ func GetAllContent() ([]models.GenericContent, error) {
 	}
 	return content, nil
 }
-func GetContentFeedOrderByDate(skip int, limitInt int) ([]models.GenericContent, error) {
+func GetContentFeedOrderByDate(skip int, limitInt int) ([]models.Feed, error) {
 	//
 	return repositories.GetContentFeedOrderByDate(skip, limitInt)
 }

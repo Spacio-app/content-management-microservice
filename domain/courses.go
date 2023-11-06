@@ -6,11 +6,15 @@ type CourseReq struct {
 	ID          string     `json:"id,omitempty"`
 	Title       string     `json:"Title" validate:"required"`
 	Description string     `json:"Description" validate:"required"`
+	Author      AuthorReq  `bson:"author" json:"author" `
 	ContentType string     `json:"ContentType" validate:"required"`
-	Author      string     `json:"Author" validate:"required"`
 	CreatedAt   time.Time  `json:"createdat,omitempty"`
 	UpdatedAt   time.Time  `json:"updatedat,omitempty"`
 	Videos      []VideoReq `json:"videos" validate:"required"`
+}
+type AuthorReq struct {
+	Name  string `bson:"name" json:"name"`
+	Photo string `bson:"photo" json:"photo"`
 }
 
 type VideoReq struct {

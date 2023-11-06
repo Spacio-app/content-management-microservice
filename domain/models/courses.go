@@ -13,7 +13,7 @@ type Courses struct {
 type Video struct {
 	Title              string `json:"title" validate:"required"`
 	Description        string `json:"desc" validate:"required"`
-	MiniatureVideo     string `json:"miniatureVideo" validate:"required"`
+	MiniatureVideo     string `json:"miniatureVideo"`
 	URL                string `json:"url" validate:"required"`
 	PublicIDCloudinary string `bson:"publicidcloudinary" json:"publicidcloudinary" validate:"required"`
 	PublicIDMiniature  string `bson:"publicidminiature,omitempty" json:"publicidminiature"`

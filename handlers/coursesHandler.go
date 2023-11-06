@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 
@@ -14,18 +15,41 @@ import (
 
 // validar datos de entrada
 
+type User struct {
+	Name  string `json:"name"`
+	Image string `json:"image"`
+	// Add more fields as needed
+}
+
 func CreateCourse(c *fiber.Ctx) error {
 	content := domain.CourseReq{}
 	// if err := c.MultipartForm(&content) {
 	// 	log.Println("Error al analizar el cuerpo de la solicitud:", err)
 	// 	return err
 	// }
+	UserHeader := c.Get("User")
+
+	var user User
+
+	if err := json.Unmarshal([]byte(UserHeader), &user); err != nil {
+		fmt.Println("Error:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al procesar el usuario",
+		})
+	}
+
+	// fmt.Println("headers USER", User)
+
 	title := c.FormValue("title")
 	description := c.FormValue("description")
-	author := c.FormValue("author")
+	// author := c.FormValue("author")
 	content.Title = title
 	content.Description = description
-	content.Author = author
+	content.Author = domain.AuthorReq{
+		Name:  user.Name,
+		Photo: user.Image,
+	}
+
 	// // Handle the videos array
 	content.Videos = []domain.VideoReq{}
 
@@ -35,43 +59,6 @@ func CreateCourse(c *fiber.Ctx) error {
 		// 	break
 		// }
 		//primera iteracion preguntar si hay miniatura
-		if i == 0 {
-			miniature, err := c.FormFile("miniature")
-			titleKey := fmt.Sprintf("videos[%d][title]", i)
-			descKey := fmt.Sprintf("videos[%d][desc]", i)
-			urlKey := fmt.Sprintf("videos[%d][url]", i)
-
-			title := c.FormValue(titleKey)
-			desc := c.FormValue(descKey)
-			file, err := c.FormFile(urlKey)
-
-			if title == "" && desc == "" && err != nil {
-				// No more videos to process
-				break
-			}
-
-			isVideo := true
-
-			secureURLs, publicIDs, miniatureURL, err := utils.ProcessUploadedFiles(c, file, isVideo, miniature)
-			if err != nil {
-				return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-					"error": "Error al procesar archivos",
-				})
-			}
-
-			// Create a video struct to hold title, desc, and file info
-			video := domain.VideoReq{
-				Title:              title,
-				Description:        desc,
-				MiniatureVideo:     miniatureURL,
-				PublicIDCloudinary: publicIDs,
-				URL:                secureURLs,
-				// You may need to define a 'File' field in your Video struct
-			}
-			content.Videos = append(content.Videos, video)
-			// videos = append(videos, video)
-
-		}
 
 		titleKey := fmt.Sprintf("videos[%d][title]", i)
 		descKey := fmt.Sprintf("videos[%d][desc]", i)
@@ -88,7 +75,7 @@ func CreateCourse(c *fiber.Ctx) error {
 
 		isVideo := true
 
-		secureURLs, publicIDs, miniatureURL, err := utils.ProcessUploadedFiles(c, file, isVideo, nil)
+		secureURLs, publicIDs, miniatureURL, PublicIDMiniature, err := utils.ProcessUploadedFiles(c, file, isVideo, nil)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"error": "Error al procesar archivos",
@@ -102,6 +89,7 @@ func CreateCourse(c *fiber.Ctx) error {
 			MiniatureVideo:     miniatureURL,
 			PublicIDCloudinary: publicIDs,
 			URL:                secureURLs,
+			PublicIDMiniature:  PublicIDMiniature,
 			// You may need to define a 'File' field in your Video struct
 		}
 		content.Videos = append(content.Videos, video)
@@ -114,6 +102,7 @@ func CreateCourse(c *fiber.Ctx) error {
 		})
 	}
 	return c.JSON(content)
+
 }
 
 // secureURLs, publicIDs, miniatureURL, err := utils.ProcessUploadedFiles(c, url, isVideo)
