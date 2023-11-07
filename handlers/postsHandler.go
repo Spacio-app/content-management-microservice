@@ -31,6 +31,15 @@ func CreatePost(c *fiber.Ctx) error {
 	}
 
 	content.Author = author
+	URLMiniature, publicIDMiniature, err := uploadMiniature(c)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al subir la miniatura",
+		})
+	}
+	content.Miniature = URLMiniature
+	content.PublicIDMiniature = publicIDMiniature
+
 	// Procesar las imágenes
 	isVideo := false
 

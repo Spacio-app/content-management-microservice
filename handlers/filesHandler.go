@@ -27,6 +27,14 @@ func CreateFile(c *fiber.Ctx) error {
 		Name:  user.Name,
 		Photo: user.Image,
 	}
+	URLMiniature, publicIDMiniature, err := uploadMiniature(c)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al subir la miniatura",
+		})
+	}
+	content.Miniature = URLMiniature
+	content.PublicIDMiniature = publicIDMiniature
 
 	content.Author = author
 	content.FilesURL = []domain.FileURLReq{}
