@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/services"
@@ -32,20 +33,28 @@ func CreateCourse(c *fiber.Ctx) error {
 
 	title := c.FormValue("title")
 	description := c.FormValue("description")
+
 	// author := c.FormValue("author")
+
+	announcementStr := c.FormValue("announcement")
 	content.Title = title
 	content.Description = description
-	user, error := getUserHeader(c)
-	if error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error al obtener el usuario",
-		})
-	}
+	announcement, err := strconv.ParseBool(announcementStr)
+	content.CreateAnnouncement = announcement
+	// user, error := getUserHeader(c)
+	// if error != nil {
+	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+	// 		"error": "Error al obtener el usuario",
+	// 	})
+	// }
+	// author := domain.AuthorReq{
+	// 	Name:  user.Name,
+	// 	Photo: user.Image,
+	// }
 	author := domain.AuthorReq{
-		Name:  user.Name,
-		Photo: user.Image,
+		Name:  "pruebaPostman",
+		Photo: "pruebaPostman",
 	}
-
 	content.Author = author
 
 	// // Handle the videos array
@@ -115,6 +124,15 @@ func CreateCourse(c *fiber.Ctx) error {
 			"error": "Error al crear el curso",
 		})
 	}
+
+	if content.CreateAnnouncement {
+		announcement := createAnnouncementFromCourse(content)
+		if err := services.CreateAnnouncement(announcement); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Error al crear el anuncio",
+			})
+		}
+	}
 	return c.JSON(content)
 
 }
@@ -167,4 +185,12 @@ func uploadMiniature(c *fiber.Ctx) (string, string, error) {
 		return "", "", err
 	}
 	return secureURLs, publicIDs, nil
+}
+func createAnnouncementFromCourse(content domain.CourseReq) domain.FeedReq {
+	announcement := domain.FeedReq{
+		Title:       content.Title,
+		Description: "Se ha creado un nuevo curso: " + content.Title + "\n" + content.Description,
+		Author:      content.Author,
+	}
+	return announcement
 }

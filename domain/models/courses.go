@@ -6,8 +6,9 @@ import (
 )
 
 type Courses struct {
-	AbstractContent `bson:",inline" json:",inline"`
-	Videos          []Video `bson:"videos" json:"videos" validate:"required"`
+	AbstractContent    `bson:",inline" json:",inline"`
+	CreateAnnouncement bool    `json:"createAnnouncement"`
+	Videos             []Video `bson:"videos" json:"videos" validate:"required"`
 	// Otros campos que puedas necesitar
 }
 type Video struct {

@@ -46,7 +46,7 @@ func ProcessUploadedFiles(c *fiber.Ctx, file *multipart.FileHeader, isVideo bool
 		videoFormats := []string{".mp4", ".mov", ".webm", ".avi", ".mkv", ".wmv", ".flv", ".3gp", ".mpeg", ".mpg", ".m4v"}
 		// Itera a través de los formatos de video y cambia la extensión a .jpg
 		for _, format := range videoFormats {
-			firstVideoURL = strings.Replace(firstVideoURL, format, ".jpg", 1)
+			firstVideoURL = strings.Replace(firstVideoURL, format, ".png", 1)
 		}
 		// Almacena la URL de la miniatura
 		miniatureURL = firstVideoURL

@@ -3,16 +3,17 @@ package domain
 import "time"
 
 type FileReq struct {
-	ID                string       `json:"id,omitempty" bson:"_id,omitempty"`
-	Title             string       `json:"Title" validate:"required"`
-	Description       string       `json:"Description" validate:"required"`
-	ContentType       string       `json:"ContentType" validate:"required"`
-	Author            AuthorReq    `json:"Author" validate:"required"`
-	CreatedAt         time.Time    `json:"createdat" validate:"required"`
-	UpdatedAt         time.Time    `json:"updatedat" validate:"required"`
-	Miniature         string       `bson:"miniature" json:"miniature,omitempty"`
-	PublicIDMiniature string       `bson:"publicidminiature" json:"publicidminiature,omitempty"`
-	FilesURL          []FileURLReq `json:"filesURL" validate:"required"`
+	ID                 string       `json:"id,omitempty" bson:"_id,omitempty"`
+	Title              string       `json:"Title" validate:"required"`
+	Description        string       `json:"Description" validate:"required"`
+	ContentType        string       `json:"ContentType" validate:"required"`
+	Author             AuthorReq    `json:"Author" validate:"required"`
+	CreatedAt          time.Time    `json:"createdat" validate:"required"`
+	UpdatedAt          time.Time    `json:"updatedat" validate:"required"`
+	Miniature          string       `bson:"miniature" json:"miniature,omitempty"`
+	PublicIDMiniature  string       `bson:"publicidminiature" json:"publicidminiature,omitempty"`
+	CreateAnnouncement bool         `json:"createAnnouncement"`
+	FilesURL           []FileURLReq `json:"filesURL" validate:"required"`
 }
 type FileURLReq struct {
 	FileURL            string `json:"fileURL" validate:"required"`

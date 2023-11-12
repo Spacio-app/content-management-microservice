@@ -21,7 +21,10 @@ func SetupRoutes(app *fiber.App) {
 
 	app.Post("/createFeed", handlers.CreateFeed)
 	app.Patch("/posts/:postID/comments", handlers.UpdatePostComments)
+	app.Delete("/posts/:postID/comments/:commentID", handlers.DeleteFeedCommentsHandler)
+	app.Get("/posts/authors/:author", handlers.GetPostsByAuthorHandler)
 
+	app.Post("/contentTest/:id/qualify", handlers.CalificarTestHandler)
 	// Rutas para obtener contenido
 	app.Get("/contentCourse", handlers.GetAllCoursesHandler)
 	app.Get("/contentPost", handlers.GetAllPostsHandler)
@@ -36,13 +39,13 @@ func SetupRoutes(app *fiber.App) {
 	app.Put("/contentTest/:id", handlers.UpdateTestHandler)
 
 	// Rutas para obtener contenido por ID
-	app.Get("/Content/:id", handlers.GetContentByIDHandler)
+	app.Get("/content/:id", handlers.GetContentByIDHandler)
 	app.Get("/contentByAuthor/:author", handlers.GetContentByAuthorHandler)
 
 	// Rutas para obtener un feed de contenido
-	app.Get("/ContentFeed", handlers.GetContentFeedHandler)
-	app.Get("/ContentFeedMore", handlers.GetContentFeedHandler)
-	app.Get("/Content", handlers.GetAllContentHandler)
+	app.Get("/contentFeed", handlers.GetContentFeedHandler)
+	app.Get("/contentFeedMore", handlers.GetContentFeedHandler)
+	app.Get("/content", handlers.GetAllContentHandler)
 
 	// Ruta para eliminar contenido
 	app.Delete("/Content/:id", handlers.DeleteContentHandler)

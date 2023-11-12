@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/services"
@@ -19,6 +20,9 @@ func CreatePost(c *fiber.Ctx) error {
 	// Asignar los valores de título y descripción
 	content.Title = title
 	content.Description = description
+	announcementStr := c.FormValue("announcement")
+	announcement, err := strconv.ParseBool(announcementStr)
+	content.CreateAnnouncement = announcement
 	user, error := getUserHeader(c)
 	if error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -83,7 +87,14 @@ func CreatePost(c *fiber.Ctx) error {
 			"error": "Error al crear el post",
 		})
 	}
-
+	if content.CreateAnnouncement {
+		announcement := createAnnouncementFromPost(content)
+		if err := services.CreateAnnouncement(announcement); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Error al crear el anuncio",
+			})
+		}
+	}
 	return c.JSON(content)
 }
 
@@ -114,4 +125,12 @@ func UpdatePostHandler(c *fiber.Ctx) error {
 		})
 	}
 	return c.JSON(content)
+}
+func createAnnouncementFromPost(content domain.PostReq) domain.FeedReq {
+	announcement := domain.FeedReq{
+		Title:       content.Title,
+		Description: "Se ha creado un nuevo Post: " + content.Title + "\n" + content.Description,
+		Author:      content.Author,
+	}
+	return announcement
 }

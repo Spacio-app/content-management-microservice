@@ -103,23 +103,48 @@ func GetAllFeeds() ([]models.Feed, error) {
 	return feeds, nil
 }
 
-// func generateFeedFromContent(content models.Feed) error{
-// 	collection := utils.GetCollection("Feed")
-// 	content.BeforeInsert() // Actualiza createdAt y updatedAt antes de insertar
+func GetFeedByAuthor(AuthorID string) ([]models.Feed, error) {
+	collection := utils.GetCollection("Feed")
+	log.Println("Obteniendo los posts de la base de datos...")
+	filter := bson.M{"authorID": AuthorID}
+	cursor, err := collection.Find(context.Background(), filter)
+	if err != nil {
+		log.Printf("Error al obtener los posts: %v\n", err)
+		return nil, err
+	}
+	log.Println("cursor", cursor)
+	var feeds []models.Feed
+	err = cursor.All(context.Background(), &feeds)
+	if err != nil {
+		log.Printf("Error al obtener los posts: %v\n", err)
+		return nil, err
+	}
+	log.Println("Posts obtenidos correctamente", feeds)
+	return feeds, nil
+}
 
-// 	//crear estructura feed para insertar en la base de datos
-// 	feed := models.Feed{
-// 		Title:       content.Title,
-// 		Description: content.Description,
-// 		ContentType: content.ContentType,
-// 		ContentID:   content.ID,
-// 		AuthorID:    content.AuthorID,
-// 		Author:	  content.Author,
-// 		AuthorPhoto: content.AuthorPhoto,
-// 	}
-// 	_, err := collection.InsertOne(context.Background(), feed)
-// 	if err != nil {
-// 		log.Printf("Error al crear el curso: %v\n", err)
-// 	}
-// 	return err
-// }
+func DeleteFeedComment(objectID primitive.ObjectID, commentID primitive.ObjectID) error {
+	// Obtener el post por su ID
+	existingPost, err := GetContentByIDFeed(objectID)
+	if err != nil {
+		return err
+	}
+
+	// Encontrar y eliminar el comentario por su ID
+	var updatedComments []models.FeedComments
+	for _, comment := range existingPost.Comments {
+		if comment.CommentID != commentID {
+			updatedComments = append(updatedComments, comment)
+		}
+	}
+	updatedPost := models.Feed{
+		Comments: updatedComments,
+	}
+	// Actualizar el post en la base de datos
+	err = UpdateFeedComments(objectID, updatedPost)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}

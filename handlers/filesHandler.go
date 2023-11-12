@@ -3,6 +3,7 @@ package handlers
 import (
 	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/services"
@@ -17,6 +18,10 @@ func CreateFile(c *fiber.Ctx) error {
 	description := c.FormValue("description")
 	content.Title = title
 	content.Description = description
+	announcementStr := c.FormValue("announcement")
+	announcement, err := strconv.ParseBool(announcementStr)
+	content.CreateAnnouncement = announcement
+
 	user, error := getUserHeader(c)
 	if error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -80,7 +85,14 @@ func CreateFile(c *fiber.Ctx) error {
 			"error": "Error al crear el archivo",
 		})
 	}
-
+	if content.CreateAnnouncement {
+		announcement := createAnnouncementFromFile(content)
+		if err := services.CreateAnnouncement(announcement); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Error al crear el anuncio",
+			})
+		}
+	}
 	return c.JSON(content)
 }
 
@@ -109,4 +121,12 @@ func UpdateFileHandler(c *fiber.Ctx) error {
 		})
 	}
 	return c.JSON(content)
+}
+func createAnnouncementFromFile(content domain.FileReq) domain.FeedReq {
+	announcement := domain.FeedReq{
+		Title:       content.Title,
+		Description: "Se ha creado un nuevo documento: " + content.Title + "\n" + content.Description,
+		Author:      content.Author,
+	}
+	return announcement
 }

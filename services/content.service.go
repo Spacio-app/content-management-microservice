@@ -31,7 +31,13 @@ func CreateTest(content domain.TestReq) error {
 func CreateFeed(content domain.FeedReq) error {
 	return repositories.CreateFeed(content)
 }
-
+func SaveTestResult(content domain.TestResultReq) error {
+	return repositories.SaveTestResult(content)
+}
+func CreateAnnouncement(announcement domain.FeedReq) error {
+	err := repositories.CreateFeed(announcement)
+	return err
+}
 func UpdatePostComments(id string, comment domain.FeedCommentsReq) error {
 	objectID, err := primitive.ObjectIDFromHex(id)
 	log.Println("objectID", objectID)
@@ -63,6 +69,16 @@ func GetAllContent() ([]models.GenericContent, error) {
 func GetContentFeedOrderByDate(skip int, limitInt int) ([]models.Feed, error) {
 	//
 	return repositories.GetContentFeedOrderByDate(skip, limitInt)
+}
+func GetPostsByAuthor(authorID string) ([]models.Feed, error) {
+	// Llamar al repositorio para obtener los posts del feed por autor\
+
+	posts, err := repositories.GetFeedByAuthor(authorID)
+	if err != nil {
+		return nil, errors.New("error al obtener el contenido")
+	}
+	return posts, nil
+
 }
 func GetContentByAuthor(author string) ([]models.GenericContent, error) {
 	return repositories.GetContentByAuthor(author)
@@ -138,6 +154,15 @@ func DeleteContentByID(id primitive.ObjectID) error {
 		return errors.New("el contenido no existe")
 	}
 	return repositories.DeleteContentByID(id)
+}
+
+func DeleteFeedComment(feedID primitive.ObjectID, commentID primitive.ObjectID) error {
+	// Verificar si existe el contenido
+	_, err := repositories.GetContentByID(feedID)
+	if err != nil {
+		return errors.New("el contenido no existe")
+	}
+	return repositories.DeleteFeedComment(feedID, commentID)
 }
 
 // Continuar con las funciones para actualizar y eliminar contenido...

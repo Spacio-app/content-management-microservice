@@ -1,6 +1,10 @@
 package domain
 
-import "time"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type FeedReq struct {
 	ID          string            `bson:"_id,omitempty" json:"id,omitempty"`
@@ -16,11 +20,12 @@ type FeedReq struct {
 	Comments    []FeedCommentsReq `bson:"comments" json:"comments"`
 }
 type FeedCommentsReq struct {
-	Author    AuthorReq `bson:"author" json:"author"`
-	Comment   string    `bson:"comment" json:"comment"`
-	ContentID string    `bson:"content_id" json:"content_id"`
-	CreatedAt time.Time `bson:"createdat,omitempty" json:"createdat,omitempty"`
-	UpdatedAt time.Time `bson:"updatedat,omitempty" json:"updatedat,omitempty"`
+	CommentID primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
+	Author    AuthorReq          `bson:"author" json:"author"`
+	Comment   string             `bson:"comment" json:"comment"`
+	ContentID string             `bson:"content_id" json:"content_id"`
+	CreatedAt time.Time          `bson:"createdat,omitempty" json:"createdat,omitempty"`
+	UpdatedAt time.Time          `bson:"updatedat,omitempty" json:"updatedat,omitempty"`
 }
 
 // Función para establecer CreatedAt y UpdatedAt antes de insertar

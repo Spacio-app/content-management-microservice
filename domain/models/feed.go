@@ -1,6 +1,10 @@
 package models
 
-import "time"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Feed struct {
 	AbstractContent `bson:",inline" json:",inline"`
@@ -8,10 +12,11 @@ type Feed struct {
 	Comments        []FeedComments `bson:"comments" json:"comments"`
 }
 type FeedComments struct {
-	Author    Author    `bson:"author" json:"author"`
-	Comment   string    `bson:"comment" json:"comment"`
-	CreatedAt time.Time `bson:"created_at" json:"created_at"`
-	UpdatedAt time.Time `bson:"updated_at" json:"updated_at"`
+	CommentID primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
+	Author    Author             `bson:"author" json:"author"`
+	Comment   string             `bson:"comment" json:"comment"`
+	CreatedAt time.Time          `bson:"created_at" json:"created_at"`
+	UpdatedAt time.Time          `bson:"updated_at" json:"updated_at"`
 }
 
 func (c *Feed) BeforeInsert() {

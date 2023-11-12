@@ -47,3 +47,12 @@ func UpdateTest(id primitive.ObjectID, content domain.TestReq) error {
 	_, err := collection.UpdateOne(context.Background(), filter, update)
 	return err
 }
+func SaveTestResult(content domain.TestResultReq) error {
+	collection := utils.GetCollection("TestResult")
+	content.BeforeInsert() // Actualiza createdAt y updatedAt antes de insertar
+	_, err := collection.InsertOne(context.Background(), content)
+	if err != nil {
+		log.Printf("Error al crear el curso: %v\n", err)
+	}
+	return err
+}

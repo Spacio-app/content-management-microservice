@@ -7,6 +7,7 @@ import (
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/services"
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateFeed(c *fiber.Ctx) error {
@@ -105,8 +106,53 @@ func GetAllFeedsHandler(c *fiber.Ctx) error {
 	return c.JSON(content)
 }
 
+func GetPostsByAuthorHandler(c *fiber.Ctx) error {
+	UserHeader := c.Get("User")
+	var user User
+	if err := json.Unmarshal([]byte(UserHeader), &user); err != nil {
+		fmt.Println("Error:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al procesar el usuario",
+		})
+	}
+	authorID := user.Name
+	content, err := services.GetPostsByAuthor(authorID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener los archivos",
+		})
+	}
+	return c.JSON(content)
+}
+
 //funcion para generar feed a partir de los contenidos si el usuario lo desea
 
 // func generateFeedFromContent(content domain.GenericContent) {
 
 // }
+func DeleteFeedCommentsHandler(c *fiber.Ctx) error {
+	feedID := c.Params("feedID")
+	commentID := c.Params("commentID")
+	postFeedID, err := primitive.ObjectIDFromHex(feedID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "ID post feed inválido",
+		})
+	}
+	commentFeedID, err := primitive.ObjectIDFromHex(commentID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "ID comentario inválido",
+		})
+	}
+	// Llamar a un servicio para eliminar el comentario del post
+	if err := services.DeleteFeedComment(postFeedID, commentFeedID); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al eliminar el comentario del post",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "Comentario eliminado exitosamente",
+	})
+}
