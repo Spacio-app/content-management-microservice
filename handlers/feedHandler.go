@@ -61,27 +61,32 @@ func UpdatePostComments(c *fiber.Ctx) error {
 			"error": "Invalid request body",
 		})
 	}
+	fmt.Println("comment1", comment1)
 
-	UserHeader := c.Get("User")
-	var user User
+	// UserHeader := c.Get("User")
+	// var user User
 
-	if err := json.Unmarshal([]byte(UserHeader), &user); err != nil {
-		fmt.Println("Error:", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error al procesar el usuario",
-		})
+	// if err := json.Unmarshal([]byte(UserHeader), &user); err != nil {
+	// 	fmt.Println("Error:", err)
+	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+	// 		"error": "Error al procesar el usuario",
+	// 	})
 
-	}
+	// }
+	commentID := primitive.NewObjectID()
 
+	// fmt.Println("user", user)
 	// Crear un nuevo comentario con el autor adecuado
 	authorReq := domain.AuthorReq{
-		Name:  user.Name,
-		Photo: user.Image,
+		Name:  "user.Name",
+		Photo: "user.Image",
 	}
 
 	comment := domain.FeedCommentsReq{
-		Author:  authorReq,
-		Comment: comment1.Comment,
+		CommentID: commentID,
+		Author:    authorReq,
+		Comment:   comment1.Comment,
+		ContentID: postID,
 		// Asignar otros campos de comentario si es necesario
 	}
 
@@ -131,7 +136,7 @@ func GetPostsByAuthorHandler(c *fiber.Ctx) error {
 
 // }
 func DeleteFeedCommentsHandler(c *fiber.Ctx) error {
-	feedID := c.Params("feedID")
+	feedID := c.Params("postID")
 	commentID := c.Params("commentID")
 	postFeedID, err := primitive.ObjectIDFromHex(feedID)
 	if err != nil {
@@ -147,6 +152,7 @@ func DeleteFeedCommentsHandler(c *fiber.Ctx) error {
 	}
 	// Llamar a un servicio para eliminar el comentario del post
 	if err := services.DeleteFeedComment(postFeedID, commentFeedID); err != nil {
+		fmt.Println("err", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error al eliminar el comentario del post",
 		})
@@ -155,4 +161,26 @@ func DeleteFeedCommentsHandler(c *fiber.Ctx) error {
 	return c.JSON(fiber.Map{
 		"message": "Comentario eliminado exitosamente",
 	})
+}
+func GetContentByIDFeed(c *fiber.Ctx) error {
+	idParam := c.Params("postID")
+	fmt.Println("idParam", idParam)
+
+	// Convertir el ID en formato string a un tipo ObjectId
+	objectID, err := primitive.ObjectIDFromHex(idParam)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "ID inválido",
+		})
+	}
+
+	content, err := services.GetContentByIDFeed(objectID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el contenido por ID",
+		})
+	}
+
+	return c.JSON(content)
 }

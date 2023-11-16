@@ -23,6 +23,7 @@ func SetupRoutes(app *fiber.App) {
 	app.Patch("/posts/:postID/comments", handlers.UpdatePostComments)
 	app.Delete("/posts/:postID/comments/:commentID", handlers.DeleteFeedCommentsHandler)
 	app.Get("/posts/authors/:author", handlers.GetPostsByAuthorHandler)
+	app.Get("/posts/:postID", handlers.GetContentByIDFeed)
 
 	app.Post("/contentTest/:id/qualify", handlers.CalificarTestHandler)
 	// Rutas para obtener contenido
@@ -49,6 +50,7 @@ func SetupRoutes(app *fiber.App) {
 
 	// Ruta para eliminar contenido
 	app.Delete("/Content/:id", handlers.DeleteContentHandler)
+	app.Delete("/posts/:postID", handlers.DeleteFeedHandler)
 	// Agregar otras rutas para actualizar, eliminar y otras operaciones...
 }
 

@@ -30,7 +30,7 @@ func UpdatePostComments(objectID primitive.ObjectID, comment domain.FeedComments
 	// Buscar el post por su ID
 	existingPost, err := GetContentByIDFeed(objectID)
 	if err != nil {
-		return err
+		fmt.Println(err)
 	}
 	log.Printf("existingPost: %v\n", existingPost)
 	// Convertir los comentarios actualizados a modelos de comentarios
@@ -43,8 +43,9 @@ func UpdatePostComments(objectID primitive.ObjectID, comment domain.FeedComments
 	}
 
 	commentModel := models.FeedComments{
-		Comment: comment.Comment,
-		Author:  authormodel,
+		CommentID: comment.CommentID,
+		Comment:   comment.Comment,
+		Author:    authormodel,
 	}
 	commentModel.BeforeInsert() // Actualiza createdAt y updatedAt antes de insertar
 

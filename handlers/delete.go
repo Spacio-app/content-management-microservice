@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+
 	"github.com/Spacio-app/content-management-microservice/services"
 	"github.com/Spacio-app/content-management-microservice/utils"
 	"github.com/gofiber/fiber/v2"
@@ -9,7 +11,7 @@ import (
 
 func DeleteContentHandler(c *fiber.Ctx) error {
 	idParam := c.Params("id")
-
+	fmt.Println("idParam", idParam)
 	objectID, err := primitive.ObjectIDFromHex(idParam)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -63,6 +65,27 @@ func DeleteContentHandler(c *fiber.Ctx) error {
 
 	// Elimina el contenido de la base de datos
 	err = services.DeleteContentByID(objectID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al eliminar el contenido por ID",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "Registro eliminado con éxito",
+	})
+}
+func DeleteFeedHandler(c *fiber.Ctx) error {
+	idParam := c.Params("postID")
+	fmt.Println("idParam", idParam)
+	objectID, err := primitive.ObjectIDFromHex(idParam)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "ID inválido",
+		})
+	}
+	// Elimina el contenido de la base de datos
+	err = services.DeleteFeedByID(objectID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error al eliminar el contenido por ID",

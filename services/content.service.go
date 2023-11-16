@@ -40,8 +40,8 @@ func CreateAnnouncement(announcement domain.FeedReq) error {
 }
 func UpdatePostComments(id string, comment domain.FeedCommentsReq) error {
 	objectID, err := primitive.ObjectIDFromHex(id)
-	log.Println("objectID", objectID)
-	log.Println("updatedComments service", comment)
+	fmt.Println("objectID", objectID)
+	fmt.Println("updatedComments service", comment)
 	if err != nil {
 		return errors.New("ID inválido")
 	}
@@ -94,6 +94,9 @@ func GetAllFiles() ([]models.Files, error) {
 }
 func GetAllTests() ([]models.Tests, error) {
 	return repositories.GetAllTests()
+}
+func GetContentByIDFeed(id primitive.ObjectID) (models.Feed, error) {
+	return repositories.GetContentByIDFeed(id)
 }
 
 // updates
@@ -155,11 +158,20 @@ func DeleteContentByID(id primitive.ObjectID) error {
 	}
 	return repositories.DeleteContentByID(id)
 }
+func DeleteFeedByID(id primitive.ObjectID) error {
+	//verificar si existe el contenido
+	_, err := repositories.GetContentByIDFeed(id)
+	if err != nil {
+		return errors.New("el contenido no existe")
+	}
+	return repositories.DeleteFeedByID(id)
+}
 
 func DeleteFeedComment(feedID primitive.ObjectID, commentID primitive.ObjectID) error {
 	// Verificar si existe el contenido
-	_, err := repositories.GetContentByID(feedID)
+	_, err := repositories.GetContentByIDFeed(feedID)
 	if err != nil {
+		fmt.Println("err", err)
 		return errors.New("el contenido no existe")
 	}
 	return repositories.DeleteFeedComment(feedID, commentID)
