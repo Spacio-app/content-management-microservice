@@ -40,21 +40,25 @@ func CreateCourse(c *fiber.Ctx) error {
 	content.Title = title
 	content.Description = description
 	announcement, err := strconv.ParseBool(announcementStr)
-	content.CreateAnnouncement = announcement
-	// user, error := getUserHeader(c)
-	// if error != nil {
-	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-	// 		"error": "Error al obtener el usuario",
-	// 	})
-	// }
-	// author := domain.AuthorReq{
-	// 	Name:  user.Name,
-	// 	Photo: user.Image,
-	// }
-	author := domain.AuthorReq{
-		Name:  "pruebaPostman",
-		Photo: "pruebaPostman",
+	if err != nil {
+		fmt.Println("Error:", err)
+		return err
 	}
+	content.CreateAnnouncement = announcement
+	user, error := getUserHeader(c)
+	if error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el usuario",
+		})
+	}
+	author := domain.AuthorReq{
+		Name:  user.Name,
+		Photo: user.Image,
+	}
+	// author := domain.AuthorReq{
+	// 	Name:  "pruebaPostman",
+	// 	Photo: "pruebaPostman",
+	// }
 	content.Author = author
 
 	// // Handle the videos array

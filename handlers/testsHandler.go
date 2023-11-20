@@ -14,20 +14,20 @@ func CreateTest(c *fiber.Ctx) error {
 		log.Println("Error al analizar el cuerpo de la solicitud:", err)
 		return err
 	}
-	// user, error := getUserHeader(c)
-	// if error != nil {
-	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-	// 		"error": "Error al obtener el usuario",
-	// 	})
-	// }
-	// author := domain.AuthorReq{
-	// 	Name:  user.Name,
-	// 	Photo: user.Image,
-	// }
-	author := domain.AuthorReq{
-		Name:  "pruebaPostman",
-		Photo: "pruebaPostman",
+	user, error := getUserHeader(c)
+	if error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el usuario",
+		})
 	}
+	author := domain.AuthorReq{
+		Name:  user.Name,
+		Photo: user.Image,
+	}
+	// author := domain.AuthorReq{
+	// 	Name:  "pruebaPostman",
+	// 	Photo: "pruebaPostman",
+	// }
 	content.Author = author
 	//enviar a servicio
 	err := services.CreateTest(content)
