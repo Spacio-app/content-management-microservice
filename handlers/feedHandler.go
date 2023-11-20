@@ -73,14 +73,14 @@ func UpdatePostComments(c *fiber.Ctx) error {
 	 	})
 
 	 }
-	commentID := primitive.NewObjectID()
-
-	// fmt.Println("user", user)
+fmt.Println("user", user)
 	// Crear un nuevo comentario con el autor adecuado
 	authorReq := domain.AuthorReq{
 		Name:  user.Name,
 		Photo: user.Image,
 	}
+	commentID := primitive.NewObjectID()
+	
 
 	comment := domain.FeedCommentsReq{
 		CommentID: commentID,
