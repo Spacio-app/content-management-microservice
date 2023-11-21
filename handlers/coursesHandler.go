@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"strconv"
-
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/services"
 	"github.com/Spacio-app/content-management-microservice/utils"
@@ -36,15 +34,19 @@ func CreateCourse(c *fiber.Ctx) error {
 
 	// author := c.FormValue("author")
 
-	announcementStr := c.FormValue("announcement")
+	// announcementStr := c.FormValue("announcement")
+	// fmt.Println("announcement", announcementStr)
 	content.Title = title
 	content.Description = description
-	announcement, err := strconv.ParseBool(announcementStr)
-	if err != nil {
-		fmt.Println("Error:", err)
-		return err
-	}
-	content.CreateAnnouncement = announcement
+	// announcement, err := strconv.ParseBool(announcementStr)
+	// if err != nil {
+	// 	fmt.Println("Error:", err)
+	// 	return err
+	// }
+	announcement := c.FormValue("createAnnouncement")
+	fmt.Println("announcement", announcement)
+	content.CreateAnnouncement = announcement == "true"
+
 	user, error := getUserHeader(c)
 	if error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -193,8 +195,9 @@ func uploadMiniature(c *fiber.Ctx) (string, string, error) {
 func createAnnouncementFromCourse(content domain.CourseReq) domain.FeedReq {
 	announcement := domain.FeedReq{
 		Title:       content.Title,
-		Description: "Se ha creado un nuevo curso: " + content.Title + "\n" + content.Description,
+		Description: "Se ha creado un nuevo curso: " + content.Title + "\n \n \n"+ "Descripcion: " + content.Description,
 		Author:      content.Author,
+		Comments:    []domain.FeedCommentsReq{},
 	}
 	return announcement
 }
