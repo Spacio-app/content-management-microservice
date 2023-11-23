@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"fmt"
 	"log"
 	"mime/multipart"
 	"strings"
@@ -42,16 +43,36 @@ func ProcessUploadedFiles(c *fiber.Ctx, file *multipart.FileHeader, isVideo bool
 	if isVideo {
 		miniatureURL := ""
 		firstVideoURL := secureURL
+		thumbnailParams := "fjpeg,q_auto:best"
 		// Lista de formatos de video admitidos
 		videoFormats := []string{".mp4", ".mov", ".webm", ".avi", ".mkv", ".wmv", ".flv", ".3gp", ".mpeg", ".mpg", ".m4v"}
 		// Itera a través de los formatos de video y cambia la extensión a .jpg
 		for _, format := range videoFormats {
-			firstVideoURL = strings.Replace(firstVideoURL, format, ".png", 1)
+			firstVideoURL = strings.Replace(firstVideoURL, format, ".jpeg", 1)
 		}
 		// Almacena la URL de la miniatura
 		miniatureURL = firstVideoURL
+		miniatureURL = fmt.Sprintf("%s?%s", miniatureURL, thumbnailParams)
 		return secureURL, publicID, miniatureURL, PublicIDMiniature, nil
 	}
 
 	return secureURL, publicID, miniatureURL, PublicIDMiniature, nil
+}
+func UploadRaws(c *fiber.Ctx, file *multipart.FileHeader) (string, string, error) {
+	var secureURL, publicID string
+	if file != nil {
+		// Procesa el archivo y carga en Cloudinary
+		src, err := file.Open()
+		if err != nil {
+			return "", "", err
+		}
+		defer src.Close()
+		fileName := file.Filename
+		publicID, secureURL, err = UploadRawsCloudinary(src, fileName)
+		if err != nil {
+			return "", "", err
+		}
+	}
+
+	return secureURL, publicID, nil
 }

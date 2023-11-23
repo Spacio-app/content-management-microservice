@@ -3,7 +3,6 @@ package handlers
 import (
 	"fmt"
 	"log"
-	"strconv"
 
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/services"
@@ -18,32 +17,32 @@ func CreateFile(c *fiber.Ctx) error {
 	description := c.FormValue("description")
 	content.Title = title
 	content.Description = description
-	announcementStr := c.FormValue("announcement")
-	announcement, err := strconv.ParseBool(announcementStr)
-	content.CreateAnnouncement = announcement
 
-	user, error := getUserHeader(c)
-	if error != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error al obtener el usuario",
-		})
-	}
+	announcement := c.FormValue("createAnnouncement")
+	fmt.Println("announcement", announcement)
+	content.CreateAnnouncement = announcement == "true"
+
+	// user, error := getUserHeader(c)
+	// if error != nil {
+	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+	// 		"error": "Error al obtener el usuario",
+	// 	})
+	// }
 	author := domain.AuthorReq{
-		Name:  user.Name,
-		Photo: user.Image,
+		Name:  "user.Name",
+		Photo: "user.Image",
 	}
+
 	URLMiniature, publicIDMiniature, err := uploadMiniature(c)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error al subir la miniatura",
-		})
+		content.Miniature = ""
 	}
+
 	content.Miniature = URLMiniature
 	content.PublicIDMiniature = publicIDMiniature
 
 	content.Author = author
 	content.FilesURL = []domain.FileURLReq{}
-	isVideo := false
 	for i := 0; ; i++ {
 		fileKey := fmt.Sprintf("filesURL[%d][fileURL]", i)
 		file, err := c.FormFile(fileKey)
@@ -58,7 +57,7 @@ func CreateFile(c *fiber.Ctx) error {
 		}
 
 		// Procesar y cargar archivos
-		secureURL, publicID, _, _, err := utils.ProcessUploadedFiles(c, file, isVideo, nil)
+		secureURL, publicID, err := utils.UploadRaws(c, file)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"error": "Error al procesar archivos",

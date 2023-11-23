@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"log"
+	"strings"
 
 	"github.com/cloudinary/cloudinary-go/v2"
 	"github.com/cloudinary/cloudinary-go/v2/api/admin"
@@ -49,6 +50,35 @@ func UploadContentToCloudinary(file interface{}) (string, string, error) {
 	// Obtener el publicID y la URL segura del video
 	publicID := uploadResult.PublicID
 	secureURL := uploadResult.SecureURL
+
+	return publicID, secureURL, nil
+}
+func UploadRawsCloudinary(file interface{}, fileName string) (string, string, error) {
+	// Inicializar el cliente de Cloudinary
+	cld, err := InitCloudinary()
+	if err != nil {
+		return "", "", fmt.Errorf("error inicializando el cliente de Cloudinary: %v", err)
+	}
+	log.Println("Contenido subido", file)
+	//si el fileName tiene espacios se reemplazan por guiones
+	fileName = strings.Replace(fileName, " ", "-", -1)
+
+	// Subir el video a Cloudinary
+	uploadResult, err := cld.Upload.Upload(context.TODO(), file, uploader.UploadParams{
+		PublicID:     fileName,
+		ResourceType: "auto",
+		RawConvert:   "aspose",
+	})
+	if err != nil {
+		return "", "", fmt.Errorf("error al subir el contenido a Cloudinary: %v", err)
+	}
+	publicIDMala := uploadResult.PublicID
+	secureURLMala := uploadResult.SecureURL
+	fmt.Println("publicIDMala", publicIDMala)
+	fmt.Println("secureURLMala", secureURLMala)
+	// Obtener el publicID y la URL segura del video
+	publicID := fileName
+	secureURL := fmt.Sprintf("https://res.cloudinary.com/ddmhgap5x/raw/upload/v1700712987/files/%s", fileName)
 
 	return publicID, secureURL, nil
 }
