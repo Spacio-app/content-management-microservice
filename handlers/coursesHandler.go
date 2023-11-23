@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/services"
 	"github.com/Spacio-app/content-management-microservice/utils"
@@ -172,6 +173,7 @@ func UpdateCourseHandler(c *fiber.Ctx) error {
 func getUserHeader(c *fiber.Ctx) (User, error) {
 	UserHeader := c.Get("User")
 
+	fmt.Println("UserHeader", UserHeader)
 	var user User
 
 	if err := json.Unmarshal([]byte(UserHeader), &user); err != nil {
@@ -195,7 +197,7 @@ func uploadMiniature(c *fiber.Ctx) (string, string, error) {
 func createAnnouncementFromCourse(content domain.CourseReq) domain.FeedReq {
 	announcement := domain.FeedReq{
 		Title:       content.Title,
-		Description: "Se ha creado un nuevo curso: " + content.Title + "\n \n \n"+ "Descripcion: " + content.Description,
+		Description: "Se ha creado un nuevo curso: " + content.Title + "\n \n \n" + "Descripcion: " + content.Description,
 		Author:      content.Author,
 		Comments:    []domain.FeedCommentsReq{},
 	}

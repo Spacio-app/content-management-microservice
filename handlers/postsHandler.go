@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/Spacio-app/content-management-microservice/domain"
@@ -11,6 +12,7 @@ import (
 func CreatePost(c *fiber.Ctx) error {
 	content := domain.PostReq{}
 	// Parsear el cuerpo JSON
+	fmt.Println("After", content)
 	if err := c.BodyParser(&content); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Error al analizar el cuerpo JSON",
@@ -24,6 +26,7 @@ func CreatePost(c *fiber.Ctx) error {
 		})
 	}
 
+	fmt.Println(content)
 	// Asignar el autor
 	author := domain.AuthorReq{
 		Name:  user.Name,
@@ -78,9 +81,9 @@ func UpdatePostHandler(c *fiber.Ctx) error {
 }
 func createAnnouncementFromPost(content domain.PostReq) domain.FeedReq {
 	announcement := domain.FeedReq{
-		Title:       content.Title,
-		Description: "Se ha creado un nuevo Post: " + content.Title + "\n" + content.Description,
-		Author:      content.Author,
+		// Title:       content.Title,
+		// Description: "Se ha creado un nuevo Post: " + content.Title + "\n" + content.Description,
+		Author: content.Author,
 	}
 	return announcement
 }
