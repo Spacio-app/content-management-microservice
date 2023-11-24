@@ -18,6 +18,7 @@ type CourseReq struct {
 type AuthorReq struct {
 	Name  string `bson:"name" json:"name"`
 	Photo string `bson:"photo" json:"photo"`
+	Email string `bson:"email" json:"email"`
 }
 
 type VideoReq struct {

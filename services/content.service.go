@@ -176,5 +176,42 @@ func DeleteFeedComment(feedID primitive.ObjectID, commentID primitive.ObjectID) 
 	}
 	return repositories.DeleteFeedComment(feedID, commentID)
 }
+func GetTestResult(contentID primitive.ObjectID, email string) (float64, error) {
+	_, err := repositories.GetContentByID(contentID)
+	if err != nil {
+		return 0, errors.New("el contenido no existe")
+	}
+
+	result, err := repositories.GetTestResult(contentID, email)
+	if err != nil {
+		return 0, errors.New("error al obtener el resultado del test")
+	}
+
+	return result, nil
+}
+
+func HasRated(rating domain.RatingReq, contentID primitive.ObjectID) (bool, error) {
+	//verificar si existe el contenido
+	_, err := repositories.GetContentByID(contentID)
+	if err != nil {
+		return false, errors.New("el contenido no existe")
+	}
+	//verificar si el usuario ya ha calificado el contenido
+	hasRated, err := repositories.HasRated(rating, contentID)
+	if err != nil {
+		return false, errors.New("error al obtener el usuario")
+	}
+	return hasRated, nil
+}
+
+func RateContent(rating domain.RatingReq) error {
+	return repositories.RateContent(rating)
+}
 
 // Continuar con las funciones para actualizar y eliminar contenido...
+func GetRatingCount(contentID primitive.ObjectID) (int64, error) {
+	return repositories.GetRatingCount(contentID)
+}
+func GetRatingAverage(contentID primitive.ObjectID) (float64, error) {
+	return repositories.GetRatingAverage(contentID)
+}

@@ -18,6 +18,10 @@ func SetupRoutes(app *fiber.App) {
 	app.Post("/contentPost", handlers.CreatePost)
 	app.Post("/contentFile", handlers.CreateFile)
 	app.Post("/contentTest", handlers.CreateTest)
+	app.Post("/contentTest/:id/qualify", handlers.CalificarTestHandler)
+	//rating
+	app.Post("/content/rate", handlers.RateContent)
+	app.Get("/content/:contentID/rating/count", handlers.GetRatingCount)
 
 	app.Post("/createFeed", handlers.CreateFeed)
 	app.Patch("/posts/:postID/comments", handlers.UpdatePostComments)

@@ -21,4 +21,5 @@ type AbstractContent struct {
 type Author struct {
 	Name  string `bson:"name" json:"name"`
 	Photo string `bson:"photo" json:"photo"`
+	Email string `bson:"email" json:"email"`
 }

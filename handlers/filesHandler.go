@@ -22,15 +22,16 @@ func CreateFile(c *fiber.Ctx) error {
 	fmt.Println("announcement", announcement)
 	content.CreateAnnouncement = announcement == "true"
 
-	// user, error := getUserHeader(c)
-	// if error != nil {
-	// 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-	// 		"error": "Error al obtener el usuario",
-	// 	})
-	// }
+	user, error := getUserHeader(c)
+	if error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el usuario",
+		})
+	}
 	author := domain.AuthorReq{
-		Name:  "user.Name",
-		Photo: "user.Image",
+		Name:  user.Name,
+		Photo: user.Image,
+		Email: user.Email,
 	}
 
 	URLMiniature, publicIDMiniature, err := uploadMiniature(c)

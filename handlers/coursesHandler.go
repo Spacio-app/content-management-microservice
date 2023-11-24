@@ -18,6 +18,7 @@ import (
 type User struct {
 	Name  string `json:"name"`
 	Image string `json:"image"`
+	Email string `json:"email"`
 	// Add more fields as needed
 }
 
@@ -57,6 +58,7 @@ func CreateCourse(c *fiber.Ctx) error {
 	author := domain.AuthorReq{
 		Name:  user.Name,
 		Photo: user.Image,
+		Email: user.Email,
 	}
 	// author := domain.AuthorReq{
 	// 	Name:  "pruebaPostman",

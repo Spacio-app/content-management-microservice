@@ -63,24 +63,24 @@ func UpdatePostComments(c *fiber.Ctx) error {
 	}
 	fmt.Println("comment1", comment1)
 
-	 UserHeader := c.Get("User")
-	 var user User
+	UserHeader := c.Get("User")
+	var user User
 
-	 if err := json.Unmarshal([]byte(UserHeader), &user); err != nil {
-	 	fmt.Println("Error:", err)
-	 	return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-	 		"error": "Error al procesar el usuario",
-	 	})
+	if err := json.Unmarshal([]byte(UserHeader), &user); err != nil {
+		fmt.Println("Error:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al procesar el usuario",
+		})
 
-	 }
-fmt.Println("user", user)
+	}
+	fmt.Println("user", user)
 	// Crear un nuevo comentario con el autor adecuado
 	authorReq := domain.AuthorReq{
 		Name:  user.Name,
 		Photo: user.Image,
+		Email: user.Email,
 	}
 	commentID := primitive.NewObjectID()
-	
 
 	comment := domain.FeedCommentsReq{
 		CommentID: commentID,

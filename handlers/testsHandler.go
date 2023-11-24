@@ -6,6 +6,7 @@ import (
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/services"
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func CreateTest(c *fiber.Ctx) error {
@@ -23,6 +24,7 @@ func CreateTest(c *fiber.Ctx) error {
 	author := domain.AuthorReq{
 		Name:  user.Name,
 		Photo: user.Image,
+		Email: user.Email,
 	}
 	// author := domain.AuthorReq{
 	// 	Name:  "pruebaPostman",
@@ -79,13 +81,23 @@ func UpdateTestHandler(c *fiber.Ctx) error {
 // calificar test
 func CalificarTestHandler(c *fiber.Ctx) error {
 	contentID := c.Params("contentID")
-	userID := c.Params("userID")
+
 	content := domain.TestReq{}
 	if err := c.BodyParser(&content); err != nil {
 		log.Println("Error al analizar el cuerpo de la solicitud:", err)
 		return err
 	}
-
+	user, error := getUserHeader(c)
+	if error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el usuario",
+		})
+	}
+	author := domain.AuthorReq{
+		Name:  user.Name,
+		Photo: user.Image,
+		Email: user.Email,
+	}
 	// Suponiendo que tienes un TestResult con las respuestas del usuario
 	userAnswers := content.UserAnswers
 
@@ -130,7 +142,7 @@ func CalificarTestHandler(c *fiber.Ctx) error {
 
 	result := domain.TestResultReq{
 		ContentID:         contentID,
-		UserID:            userID, // Reemplaza con el ID del usuario
+		Author:            author, // Reemplaza con el ID del usuario
 		Calification:      calification,
 		PercentageCorrect: percentageCorrect,
 	}
@@ -156,6 +168,41 @@ func calculateCalification(percentage float64) float64 {
 	}
 
 	return calification
+}
+func HasRatedTestHandler(c *fiber.Ctx) error {
+	contentID := c.Params("contentID")
+
+	user, err := getUserHeader(c)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el usuario",
+		})
+	}
+
+	author := domain.AuthorReq{
+		Name:  user.Name,
+		Photo: user.Image,
+		Email: user.Email,
+	}
+
+	objectID, err := primitive.ObjectIDFromHex(contentID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "ID de contenido inválido",
+		})
+	}
+
+	result, err := services.GetTestResult(objectID, author.Email)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el resultado del test",
+		})
+	}
+
+	hasRated := result > 0
+	return c.JSON(fiber.Map{
+		"hasRated": hasRated,
+	})
 }
 
 func createAnnouncementFromTest(content domain.TestReq) domain.FeedReq {

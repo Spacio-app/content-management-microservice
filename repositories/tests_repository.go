@@ -56,3 +56,14 @@ func SaveTestResult(content domain.TestResultReq) error {
 	}
 	return err
 }
+func GetTestResult(contentID primitive.ObjectID, email string) (float64, error) {
+	collection := utils.GetCollection("TestResult")
+	filter := bson.M{"content_id": contentID, "author.email": email}
+	var result models.TestResult
+	err := collection.FindOne(context.Background(), filter).Decode(&result)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.Calification, nil
+}

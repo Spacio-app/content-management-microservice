@@ -31,6 +31,7 @@ func CreatePost(c *fiber.Ctx) error {
 	author := domain.AuthorReq{
 		Name:  user.Name,
 		Photo: user.Image,
+		Email: user.Email,
 	}
 	content.Author = author
 

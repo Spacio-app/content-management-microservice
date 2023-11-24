@@ -71,9 +71,17 @@ func GetContentFeedHandler(c *fiber.Ctx) error {
 		})
 	}
 
+	// Verificar si no hay más contenido
+	if len(content) == 0 {
+		return c.Status(fiber.StatusNoContent).JSON(fiber.Map{
+			"message": "No hay más contenido de feed disponible.",
+		})
+	}
+
 	// Devolver los datos como respuesta JSON
 	return c.JSON(content)
 }
+
 func GetContentByAuthorHandler(c *fiber.Ctx) error {
 	author := c.Params("author")
 

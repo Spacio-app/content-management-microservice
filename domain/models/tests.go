@@ -30,7 +30,7 @@ type UserAnswer struct {
 }
 type TestResult struct {
 	ContentID         string       `bson:"contentid" json:"contentid" validate:"required"`
-	UserID            string       `bson:"userid" json:"userid" validate:"required"`
+	Author            Author       `bson:"userid" json:"userid" validate:"required"`
 	Answers           []UserAnswer `bson:"answers" json:"answers" validate:"required"`
 	Calification      float64      `bson:"calification" json:"calification" validate:"required"`
 	PercentageCorrect float64      `bson:"percentagecorrect" json:"percentagecorrect" validate:"required"`
