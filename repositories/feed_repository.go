@@ -40,6 +40,7 @@ func UpdatePostComments(objectID primitive.ObjectID, comment domain.FeedComments
 	authormodel := models.Author{
 		Name:  comment.Author.Name,
 		Photo: comment.Author.Photo,
+		Email: comment.Author.Email,
 	}
 
 	commentModel := models.FeedComments{

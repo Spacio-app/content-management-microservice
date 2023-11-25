@@ -32,6 +32,7 @@ func CreateFeed(c *fiber.Ctx) error {
 	content.Author = domain.AuthorReq{
 		Name:  user.Name,
 		Photo: user.Image,
+		Email: user.Email,
 	}
 	// AuthorID := c.Locals("userID").(string)     // Suponiendo que userID es un string
 	// AuthorPhoto := c.Locals("userPhoto").(string)
