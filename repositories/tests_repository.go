@@ -67,3 +67,14 @@ func GetTestResult(contentID primitive.ObjectID, email string) (float64, error) 
 
 	return result.Calification, nil
 }
+func GetTestAttempts(contentID primitive.ObjectID, email string) (int64, error) {
+	collection := utils.GetCollection("TestResult")
+	filter := bson.M{"content_id": contentID, "author.email": email}
+	//contar los intentos
+	attempts, err := collection.CountDocuments(context.Background(), filter)
+	if err != nil {
+		return 0, err
+	}
+
+	return attempts, nil
+}

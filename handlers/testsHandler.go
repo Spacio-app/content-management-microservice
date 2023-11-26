@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/Spacio-app/content-management-microservice/domain"
@@ -12,16 +13,17 @@ import (
 func CreateTest(c *fiber.Ctx) error {
 	content := domain.TestReq{}
 	if err := c.BodyParser(&content); err != nil {
-		log.Println("Error al analizar el cuerpo de la solicitud:", err)
+		fmt.Println("Error al analizar el cuerpo de la solicitud:", err)
 		return err
 	}
+	fmt.Println("content", content)
 	user, error := getUserHeader(c)
 	if error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error al obtener el usuario",
 		})
 	}
-	author := domain.AuthorReq{
+	content.Author = domain.AuthorReq{
 		Name:  user.Name,
 		Photo: user.Image,
 		Email: user.Email,
@@ -30,7 +32,7 @@ func CreateTest(c *fiber.Ctx) error {
 	// 	Name:  "pruebaPostman",
 	// 	Photo: "pruebaPostman",
 	// }
-	content.Author = author
+
 	//enviar a servicio
 	err := services.CreateTest(content)
 	if err != nil {
@@ -212,4 +214,36 @@ func createAnnouncementFromTest(content domain.TestReq) domain.FeedReq {
 		Author:      content.Author,
 	}
 	return announcement
+}
+
+// funcion para obtener intentos de un test
+func GetTestAttemptsHandler(c *fiber.Ctx) error {
+	contentID := c.Params("contentID")
+
+	objectID, err := primitive.ObjectIDFromHex(contentID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "ID de contenido inválido",
+		})
+	}
+	//obteber header
+	user, err := getUserHeader(c)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el usuario",
+		})
+	}
+	email := user.Email
+
+	attempts, err := services.GetTestAttempts(objectID, email)
+	if err != nil {
+		// return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		// 	"error": "Error al obtener los intentos del test",
+		// })
+		fmt.Println("Error al obtener los intentos del test", err)
+	}
+
+	return c.JSON(fiber.Map{
+		"attempts": attempts,
+	})
 }

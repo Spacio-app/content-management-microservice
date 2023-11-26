@@ -215,3 +215,6 @@ func GetRatingCount(contentID primitive.ObjectID) (int64, error) {
 func GetRatingAverage(contentID primitive.ObjectID) (float64, error) {
 	return repositories.GetRatingAverage(contentID)
 }
+func GetTestAttempts(contentID primitive.ObjectID, email string) (int64, error) {
+	return repositories.GetTestAttempts(contentID, email)
+}

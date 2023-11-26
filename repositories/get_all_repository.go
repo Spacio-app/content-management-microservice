@@ -64,7 +64,7 @@ func GetContentByAuthor(author string) ([]models.GenericContent, error) {
 	collection := utils.GetCollection("Content")
 
 	// Define un filtro para buscar contenido por autor
-	filter := bson.M{"author": author}
+	filter := bson.M{"author.email": author}
 
 	cursor, err := collection.Find(context.Background(), filter)
 	if err != nil {

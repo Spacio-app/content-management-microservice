@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/services"
 	"github.com/gofiber/fiber/v2"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -83,7 +84,19 @@ func GetContentFeedHandler(c *fiber.Ctx) error {
 }
 
 func GetContentByAuthorHandler(c *fiber.Ctx) error {
-	author := c.Params("author")
+	user, error := getUserHeader(c)
+	if error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el usuario",
+		})
+	}
+	authorHeader := domain.AuthorReq{
+		Name:  user.Name,
+		Photo: user.Image,
+		Email: user.Email,
+	}
+	//correo del autor
+	author := authorHeader.Email
 
 	// Llama a tu función en el servicio que obtiene el contenido por autor
 	content, err := services.GetContentByAuthor(author)

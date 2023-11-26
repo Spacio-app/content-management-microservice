@@ -7,7 +7,7 @@ type TestReq struct {
 	Title              string     `json:"Title" validate:"required"`
 	Description        string     `json:"Description" validate:"required"`
 	ContentType        string     `json:"ContentType" validate:"required"`
-	Author             AuthorReq  `json:"Author" validate:"required"`
+	Author             AuthorReq  `json:"Author"`
 	CreatedAt          time.Time  `json:"createdat" validate:"required"`
 	UpdatedAt          time.Time  `json:"updatedat" validate:"required"`
 	Miniature          string     `bson:"miniature" json:"miniature,omitempty"`
@@ -15,6 +15,7 @@ type TestReq struct {
 	Questions          []Question `json:"questions" validate:"required"`
 	// Otros campos que puedas necesitar
 	UserAnswers []UserAnswer `json:"useranswers" validate:"required"`
+	Attempts    int          `json:"attempts,omitempty"`
 }
 
 type Question struct {
@@ -43,6 +44,7 @@ type TestResultReq struct {
 	PercentageCorrect float64      `bson:"percentagecorrect" json:"percentagecorrect" validate:"required"`
 	CreatedAt         time.Time    `bson:"createdat,omitempty" json:"createdat,omitempty"`
 	UpdatedAt         time.Time    `bson:"updatedat,omitempty" json:"updatedat,omitempty"`
+	Attempts          int          `json:"attempts,omitempty"`
 }
 
 // Función para establecer CreatedAt y UpdatedAt antes de insertar

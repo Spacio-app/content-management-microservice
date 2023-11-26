@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/Spacio-app/content-management-microservice/domain"
@@ -75,9 +76,10 @@ func GetRatingCount(c *fiber.Ctx) error {
 
 	count, err := services.GetRatingCount(objectID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error al obtener el conteo de calificaciones",
-		})
+		fmt.Println(err)
+		// return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		// 	"error": "Error al obtener el conteo de calificaciones",
+		// })
 	}
 	return c.JSON(fiber.Map{
 		"count": count,
@@ -95,9 +97,10 @@ func GetRatingAverage(c *fiber.Ctx) error {
 
 	average, err := services.GetRatingAverage(objectID)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": "Error al obtener el promedio de calificaciones",
-		})
+		fmt.Println(err)
+		// return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+		// 	"error": "Error al obtener el promedio de calificaciones",
+		// })
 	}
 	return c.JSON(fiber.Map{
 		"average": average,
