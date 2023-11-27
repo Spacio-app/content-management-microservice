@@ -198,8 +198,8 @@ func uploadMiniature(c *fiber.Ctx) (string, string, error) {
 }
 func createAnnouncementFromCourse(content domain.CourseReq) domain.FeedReq {
 	announcement := domain.FeedReq{
-		Title:       content.Title,
-		Description: "Se ha creado un nuevo curso: " + content.Title + "\n \n \n" + "Descripcion: " + content.Description,
+		Title:       "Se ha creado un nuevo curso: " + content.Title,
+		Description: "Descripcion: " + content.Description,
 		Author:      content.Author,
 		Miniature:   content.Miniature,
 		Comments:    []domain.FeedCommentsReq{},
