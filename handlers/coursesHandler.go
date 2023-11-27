@@ -201,6 +201,7 @@ func createAnnouncementFromCourse(content domain.CourseReq) domain.FeedReq {
 		Title:       content.Title,
 		Description: "Se ha creado un nuevo curso: " + content.Title + "\n \n \n" + "Descripcion: " + content.Description,
 		Author:      content.Author,
+		Miniature:   content.Miniature,
 		Comments:    []domain.FeedCommentsReq{},
 	}
 	return announcement

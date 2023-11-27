@@ -2,15 +2,17 @@ package domain
 
 import (
 	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 type RatingReq struct {
-	ID        string    `bson:"_id,omitempty" json:"id,omitempty"`
-	ContentID string    `bson:"content_id" json:"content_id"`
-	Author    AuthorReq `bson:"author" json:"author"`
-	Rating    float64   `bson:"rating" json:"rating"`
-	CreatedAt time.Time `bson:"createdat,omitempty" json:"createdat,omitempty"`
-	UpdatedAt time.Time `bson:"updatedat,omitempty" json:"updatedat,omitempty"`
+	ID        string             `bson:"_id,omitempty" json:"id,omitempty"`
+	ContentID primitive.ObjectID `bson:"content_id" json:"content_id"`
+	Author    AuthorReq          `bson:"author" json:"author"`
+	Rating    float64            `bson:"rating" json:"rating"`
+	CreatedAt time.Time          `bson:"createdat,omitempty" json:"createdat,omitempty"`
+	UpdatedAt time.Time          `bson:"updatedat,omitempty" json:"updatedat,omitempty"`
 }
 
 // Función para establecer CreatedAt y UpdatedAt antes de insertar

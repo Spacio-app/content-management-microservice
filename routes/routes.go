@@ -22,8 +22,9 @@ func SetupRoutes(app *fiber.App) {
 	//get attemps
 	app.Get("/contentTest/:id/attempts", handlers.GetTestAttemptsHandler)
 	//rating
-	app.Post("/content/rate", handlers.RateContent)
+	app.Post("/content/rate/:contentID", handlers.RateContent)
 	app.Get("/content/:contentID/rating/count", handlers.GetRatingCount)
+	app.Get("/content/:contentID/rating/average", handlers.GetRatingAverage)
 
 	app.Post("/createFeed", handlers.CreateFeed)
 	app.Patch("/posts/:postID/comments", handlers.UpdatePostComments)

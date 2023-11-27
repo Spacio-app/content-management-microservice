@@ -2,6 +2,8 @@ package repositories
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"log"
 
 	"github.com/Spacio-app/content-management-microservice/domain"
@@ -40,20 +42,43 @@ func GetRatingCount(contentID primitive.ObjectID) (int64, error) {
 	return count, nil
 }
 func GetRatingAverage(contentID primitive.ObjectID) (float64, error) {
+	var ratings []models.Rating
 	collection := utils.GetCollection("Ratings")
 	filter := bson.M{"content_id": contentID}
-	var result []models.Rating
+	fmt.Println(filter)
+	//FIND ALL RATINGS FOR CONTENT
 	cursor, err := collection.Find(context.Background(), filter)
 	if err != nil {
+		fmt.Println("Error al obtener los ratrings:", err)
 		return 0, err
 	}
-	err = cursor.All(context.Background(), &result)
+
+	fmt.Println("CURSOR", cursor)
+
+	err = cursor.All(context.Background(), &ratings)
 	if err != nil {
+		log.Printf("Error al obtener los ratrings: %v\n", err)
 		return 0, err
 	}
-	var total float64
-	for _, rating := range result {
-		total += rating.Rating
+
+	//CALCULATE AVERAGE
+	var sum float64
+	var count int64
+	//recorrer ratings y sumarlos
+	fmt.Println("RATINGS", ratings)
+
+	for _, rating := range ratings {
+		//transformar rating a float64
+		sum += float64(rating.Rating)
+		count++
 	}
-	return total / float64(len(result)), nil
+
+	if count == 0 {
+		return 0, errors.New("No hay calificaciones válidas para calcular el promedio")
+	}
+
+	average := sum / float64(count)
+
+	fmt.Println(average)
+	return average, nil
 }

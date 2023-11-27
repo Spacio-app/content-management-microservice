@@ -17,6 +17,7 @@ type FeedReq struct {
 	AuthorID    string            `bson:"authorid" json:"authorid"`
 	ContentID   string            `bson:"content_id" json:"content_id"`
 	AuthorPhoto string            `bson:"author_photo" json:"author_photo"`
+	Miniature   string            `bson:"miniature" json:"miniature"`
 	Comments    []FeedCommentsReq `bson:"comments" json:"comments"`
 }
 type FeedCommentsReq struct {

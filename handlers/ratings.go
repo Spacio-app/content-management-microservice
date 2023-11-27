@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"log"
 
 	"github.com/Spacio-app/content-management-microservice/domain"
 	"github.com/Spacio-app/content-management-microservice/services"
@@ -13,13 +12,14 @@ import (
 func RateContent(c *fiber.Ctx) error {
 	rating := domain.RatingReq{}
 	contentID := c.Params("contentID")
-	// Parsear el cuerpo JSON
 	if err := c.BodyParser(&rating); err != nil {
-		log.Println("Error al analizar el cuerpo de la solicitud:", err)
+		fmt.Println("Error al analizar el cuerpo de la solicitud:", err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Error al analizar el cuerpo JSON",
 		})
 	}
+	fmt.Println("rating", rating.Rating)
+	fmt.Println("contentID", contentID)
 	user, error := getUserHeader(c)
 	if error != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -41,7 +41,7 @@ func RateContent(c *fiber.Ctx) error {
 			"error": "ID inválido",
 		})
 	}
-
+	rating.ContentID = objectID
 	//has rated
 	hasRated, err := services.HasRated(rating, objectID)
 	if err != nil {
@@ -66,6 +66,7 @@ func RateContent(c *fiber.Ctx) error {
 // get rating count
 func GetRatingCount(c *fiber.Ctx) error {
 	contentID := c.Params("contentID")
+	fmt.Println("contentID", contentID)
 	//transformar contentID a primitive.ObjectID
 	objectID, err := primitive.ObjectIDFromHex(contentID)
 	if err != nil {
@@ -81,12 +82,11 @@ func GetRatingCount(c *fiber.Ctx) error {
 		// 	"error": "Error al obtener el conteo de calificaciones",
 		// })
 	}
-	return c.JSON(fiber.Map{
-		"count": count,
-	})
+	return c.JSON(count)
 }
 func GetRatingAverage(c *fiber.Ctx) error {
 	contentID := c.Params("contentID")
+	fmt.Println("contentID", contentID)
 	//transformar contentID a primitive.ObjectID
 	objectID, err := primitive.ObjectIDFromHex(contentID)
 	if err != nil {
@@ -94,15 +94,14 @@ func GetRatingAverage(c *fiber.Ctx) error {
 			"error": "ID inválido",
 		})
 	}
-
+	fmt.Println("objectID", objectID)
 	average, err := services.GetRatingAverage(objectID)
+	fmt.Println("average", average)
 	if err != nil {
 		fmt.Println(err)
 		// return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 		// 	"error": "Error al obtener el promedio de calificaciones",
 		// })
 	}
-	return c.JSON(fiber.Map{
-		"average": average,
-	})
+	return c.JSON(average)
 }
