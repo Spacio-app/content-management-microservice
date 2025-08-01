@@ -15,7 +15,7 @@ import (
 func InitCloudinary() (*cloudinary.Cloudinary, error) {
 	// Cargar variables de entorno desde .env
 	if err := godotenv.Load(); err != nil {
-		return nil, log.Printf("Warning: .env file not found — relying on environment variables")
+		log.Printf("Warning: .env file not found — relying on environment variables")
 	}
 
 	// Obtener credenciales de Cloudinary desde variables de entorno
