@@ -50,7 +50,7 @@ func main() {
 	// Configurar el archivo de registro
 	logFile, err := os.Create("app.log")
 	if err != nil {
-		log.Fatal(err)
+		//log.Fatal(err)
 	}
 	defer logFile.Close()
 
@@ -67,7 +67,7 @@ func main() {
 	filter := bson.M{} // <filtro>
 	cursor, err := collection.Find(context.Background(), filter)
 	if err != nil {
-		log.Fatal(err)
+		//log.Fatal(err)
 	}
 	defer cursor.Close(context.Background())
 
@@ -75,13 +75,13 @@ func main() {
 	for cursor.Next(context.Background()) {
 		var result bson.M
 		if err := cursor.Decode(&result); err != nil {
-			log.Fatal(err)
+			//log.Fatal(err)
 		}
 		fmt.Println(result)
 	}
 
 	if err := cursor.Err(); err != nil {
-		log.Fatal(err)
+		//log.Fatal(err)
 	}
 
 	// Iniciar el servidor
