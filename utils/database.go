@@ -33,7 +33,7 @@ func InitDatabase() {
 	// Conectar a MongoDB
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
-		log.Printf("Error conectando a MongoDB: %v", err)
+		log.Fatalf("Error conectando a MongoDB: %v", err) // termina el programa
 	}
 
 	// Asignar la referencia a la base de datos

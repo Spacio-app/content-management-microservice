@@ -67,21 +67,22 @@ func main() {
 	filter := bson.M{} // <filtro>
 	cursor, err := collection.Find(context.Background(), filter)
 	if err != nil {
-		//log.Fatal(err)
-	}
-	defer cursor.Close(context.Background())
+		log.Printf("Warning: no se pudo obtener datos de MongoDB: %v", err)
+	} else {
+		defer cursor.Close(context.Background())
 
-	// Iterar a través de los resultados
-	for cursor.Next(context.Background()) {
-		var result bson.M
-		if err := cursor.Decode(&result); err != nil {
-			//log.Fatal(err)
+		// Iterar a través de los resultados
+		for cursor.Next(context.Background()) {
+			var result bson.M
+			if err := cursor.Decode(&result); err != nil {
+				log.Printf("Error decodificando documento: %v", err)
+			}
+			fmt.Println(result)
 		}
-		fmt.Println(result)
-	}
 
-	if err := cursor.Err(); err != nil {
-		//log.Fatal(err)
+		if err := cursor.Err(); err != nil {
+			log.Printf("Error al iterar el cursor: %v", err)
+		}
 	}
 
 	// Iniciar el servidor
