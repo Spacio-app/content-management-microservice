@@ -29,8 +29,10 @@ import (
 func main() {
 	// Inicializar la base de datos antes de configurar el servidor
 	// Load environment variables from .env file
-	if err := godotenv.Load(); err != nil {
-		log.Fatalf("Error loading .env file: %v", err)
+	func init() {
+		if err := godotenv.Load(); err != nil {
+			log.Fatalf("Error loading .env file: %v", err)
+		}
 	}
 	utils.InitCloudinary()
 	utils.InitDatabase()
