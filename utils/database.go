@@ -27,7 +27,6 @@ func InitDatabase() {
 
 	// Obtener la cadena de conexión de MongoDB desde las variables de entorno
 	connectionString := os.Getenv("MONGODB_URI") // <cadena de conexión>
-	fmt.Println("Conectando a MongoDB con la cadena:", connectionString)
 	///connectionString := "mongodb+srv://spacio:yrhxtXKZd5O1EUVa@spacio.b0dcbnn.mongodb.net/?retryWrites=true&w=majority"
 	// Opciones de configuración
 	clientOptions := options.Client().ApplyURI(connectionString)
@@ -35,7 +34,7 @@ func InitDatabase() {
 	// Conectar a MongoDB
 	client, err := mongo.Connect(context.Background(), clientOptions)
 	if err != nil {
-		log.Fatal(err)
+		log.Printf("Error conectando a MongoDB: %v", err)
 	}
 
 	// Asignar la referencia a la base de datos
