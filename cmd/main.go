@@ -25,15 +25,15 @@ import (
 // 	}
 // 	return cld
 // }
+func init() {
+	if err := godotenv.Load(); err != nil {
+		log.Printf("Warning: .env file not found — relying on environment variables")
+	}
+}
 
 func main() {
 	// Inicializar la base de datos antes de configurar el servidor
 	// Load environment variables from .env file
-	func init() {
-		if err := godotenv.Load(); err != nil {
-			log.Fatalf("Error loading .env file: %v", err)
-		}
-	}
 	utils.InitCloudinary()
 	utils.InitDatabase()
 	// Crear instancia de Fiber
