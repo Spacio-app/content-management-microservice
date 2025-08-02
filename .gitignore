@@ -2,6 +2,7 @@
 /tmp
 # .env
 
+/cmd/app.log
 *.exe
 *.exe~
 *.dll
