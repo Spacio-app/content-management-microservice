@@ -1,6 +1,8 @@
 package handlers
 
 import (
+	"fmt"
+
 	"github.com/Spacio-app/content-management-microservice/services"
 	"github.com/Spacio-app/content-management-microservice/utils"
 	"github.com/gofiber/fiber/v2"
@@ -9,7 +11,16 @@ import (
 
 func DeleteContentHandler(c *fiber.Ctx) error {
 	idParam := c.Params("id")
+	fmt.Println("idParam", idParam)
 
+	user, error := getUserHeader(c)
+	if error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el usuario",
+		})
+	}
+	//sacar correo del usuario
+	AuthorEmail := user.Email
 	objectID, err := primitive.ObjectIDFromHex(idParam)
 	if err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
@@ -24,6 +35,13 @@ func DeleteContentHandler(c *fiber.Ctx) error {
 			"error": "Error al obtener el contenido por ID",
 		})
 	}
+	//verificar si el usuario es el autor
+	if AuthorEmail != content.Author.Email {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "No tienes permiso para eliminar este contenido",
+		})
+	}
+
 	//verificar si el contenido es un curso
 	isCourse := content.Videos != nil
 	//verificar si el contenido es un archivo
@@ -63,6 +81,49 @@ func DeleteContentHandler(c *fiber.Ctx) error {
 
 	// Elimina el contenido de la base de datos
 	err = services.DeleteContentByID(objectID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al eliminar el contenido por ID",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "Registro eliminado con éxito",
+	})
+}
+func DeleteFeedHandler(c *fiber.Ctx) error {
+	idParam := c.Params("postID")
+	fmt.Println("idParam", idParam)
+	objectID, err := primitive.ObjectIDFromHex(idParam)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "ID inválido",
+		})
+	}
+	user, error := getUserHeader(c)
+	if error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el usuario",
+		})
+	}
+	//sacar correo del usuario
+	AuthorEmail := user.Email
+	// Obtén el contenido que se va a eliminar
+	content, err := services.GetContentByIDFeed(objectID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el contenido por ID",
+		})
+	}
+	//verificar si el usuario es el autor
+	if AuthorEmail != content.Author.Email {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": "No tienes permiso para eliminar este contenido",
+		})
+	}
+
+	// Elimina el contenido de la base de datos
+	err = services.DeleteFeedByID(objectID)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": "Error al eliminar el contenido por ID",

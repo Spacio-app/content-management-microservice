@@ -1,0 +1,184 @@
+package handlers
+
+import (
+	"encoding/json"
+	"fmt"
+
+	"github.com/Spacio-app/content-management-microservice/domain"
+	"github.com/Spacio-app/content-management-microservice/services"
+	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
+
+func CreateFeed(c *fiber.Ctx) error {
+	content := domain.FeedReq{}
+	//bodyparser
+	if err := c.BodyParser(&content); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+	UserHeader := c.Get("User")
+
+	var user User
+
+	if err := json.Unmarshal([]byte(UserHeader), &user); err != nil {
+		fmt.Println("Error:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al procesar el usuario",
+		})
+	}
+
+	content.Author = domain.AuthorReq{
+		Name:  user.Name,
+		Photo: user.Image,
+		Email: user.Email,
+	}
+	// AuthorID := c.Locals("userID").(string)     // Suponiendo que userID es un string
+	// AuthorPhoto := c.Locals("userPhoto").(string)
+
+	//generar comentarios vacios
+	content.Comments = []domain.FeedCommentsReq{}
+
+	//llamar al servicio
+	if err := services.CreateFeed(content); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al crear el curso",
+		})
+	}
+	return c.JSON(content)
+}
+func UpdatePostComments(c *fiber.Ctx) error {
+	// Obtener postID del parámetro o cuerpo de la solicitud
+	postID := c.Params("postID")
+
+	fmt.Println("postID", postID)
+	// Obtener los nuevos datos del array de comentarios del cuerpo de la solicitud
+	// var updatedComments domain.FeedCommentsReq
+
+	var comment1 domain.FeedCommentsReq
+	if err := c.BodyParser(&comment1); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid request body",
+		})
+	}
+	fmt.Println("comment1", comment1)
+	// Obtener el usuario del header
+	user, error := getUserHeader(c)
+	if error != nil {
+		fmt.Println("Error:", error)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el usuario",
+		})
+	}
+	fmt.Println("user", user)
+	// Crear un nuevo comentario con el autor adecuado
+	authorReq := domain.AuthorReq{
+		Name:  user.Name,
+		Photo: user.Image,
+		Email: user.Email,
+	}
+	commentID := primitive.NewObjectID()
+
+	comment := domain.FeedCommentsReq{
+		CommentID: commentID,
+		Author:    authorReq,
+		Comment:   comment1.Comment,
+		ContentID: postID,
+		// Asignar otros campos de comentario si es necesario
+	}
+
+	// Agregar el nuevo comentario a la lista de comentarios actualizados
+
+	// Llamar a un servicio para actualizar los comentarios del post
+	if err := services.UpdatePostComments(postID, comment); err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al actualizar los comentarios del post",
+		})
+	}
+	return c.JSON(comment)
+}
+
+func GetAllFeedsHandler(c *fiber.Ctx) error {
+	content, err := services.GetAllFeeds()
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener los archivos",
+		})
+	}
+	return c.JSON(content)
+}
+
+func GetPostsByAuthorHandler(c *fiber.Ctx) error {
+	UserHeader := c.Get("User")
+	var user User
+	if err := json.Unmarshal([]byte(UserHeader), &user); err != nil {
+		fmt.Println("Error:", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al procesar el usuario",
+		})
+	}
+	authorID := user.Name
+	content, err := services.GetPostsByAuthor(authorID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener los archivos",
+		})
+	}
+	return c.JSON(content)
+}
+
+//funcion para generar feed a partir de los contenidos si el usuario lo desea
+
+// func generateFeedFromContent(content domain.GenericContent) {
+
+// }
+func DeleteFeedCommentsHandler(c *fiber.Ctx) error {
+	feedID := c.Params("postID")
+	commentID := c.Params("commentID")
+	postFeedID, err := primitive.ObjectIDFromHex(feedID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "ID post feed inválido",
+		})
+	}
+	commentFeedID, err := primitive.ObjectIDFromHex(commentID)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "ID comentario inválido",
+		})
+	}
+	// Llamar a un servicio para eliminar el comentario del post
+	if err := services.DeleteFeedComment(postFeedID, commentFeedID); err != nil {
+		fmt.Println("err", err)
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al eliminar el comentario del post",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"message": "Comentario eliminado exitosamente",
+	})
+}
+func GetContentByIDFeed(c *fiber.Ctx) error {
+	idParam := c.Params("postID")
+	fmt.Println("idParam", idParam)
+
+	// Convertir el ID en formato string a un tipo ObjectId
+	objectID, err := primitive.ObjectIDFromHex(idParam)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "ID inválido",
+		})
+	}
+
+	content, err := services.GetContentByIDFeed(objectID)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el contenido por ID",
+		})
+	}
+
+	return c.JSON(content)
+}

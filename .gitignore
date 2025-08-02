@@ -1,7 +1,8 @@
 # Binaries for programs and plugins
 /tmp
-# .env
+.env
 
+/cmd/app.log
 *.exe
 *.exe~
 *.dll

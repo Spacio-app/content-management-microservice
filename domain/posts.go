@@ -3,15 +3,14 @@ package domain
 import "time"
 
 type PostReq struct {
-	ID          string        `json:"id,omitempty" bson:"_id,omitempty"`
-	Title       string        `json:"Title" validate:"required"`
-	Description string        `json:"Description" validate:"required"`
-	ContentType string        `json:"ContentType" validate:"required"`
-	Author      string        `json:"Author" validate:"required"`
-	CreatedAt   time.Time     `json:"createdat" validate:"required"`
-	UpdatedAt   time.Time     `json:"updatedat" validate:"required"`
-	Miniature   string        `bson:"miniature" json:"miniature,omitempty"`
-	ImagesURL   []ImageURLReq `json:"imagesURL" validate:"required"`
+	Author AuthorReq `bson:"author" json:"author" validate:"required"`
+	//ImagesURL          []ImageURLReq `json:"imagesURL" validate:"required"`
+	CreateAnnouncement bool                     `json:"createAnnouncement"`
+	Blocks             []map[string]interface{} `bson:"blocks" json:"blocks,omitempty" validate:"required"`
+	EntityMap          map[string]interface{}   `bson:"entityMap" json:"entityMap,omitempty" validate:"required"`
+	CreatedAt          time.Time                `json:"createdat" `
+	UpdatedAt          time.Time                `json:"updatedat"`
+	ContentType        string                   `json:"ContentType"`
 }
 type ImageURLReq struct {
 	ImageURL           string `json:"imageURL" validate:"required"`

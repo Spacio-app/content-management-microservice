@@ -15,12 +15,35 @@ func CreateFile(c *fiber.Ctx) error {
 
 	title := c.FormValue("title")
 	description := c.FormValue("description")
-	author := c.FormValue("author")
 	content.Title = title
 	content.Description = description
+
+	announcement := c.FormValue("createAnnouncement")
+	fmt.Println("announcement", announcement)
+	content.CreateAnnouncement = announcement == "true"
+
+	user, error := getUserHeader(c)
+	if error != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": "Error al obtener el usuario",
+		})
+	}
+	author := domain.AuthorReq{
+		Name:  user.Name,
+		Photo: user.Image,
+		Email: user.Email,
+	}
+
+	URLMiniature, publicIDMiniature, err := uploadMiniature(c)
+	if err != nil {
+		content.Miniature = ""
+	}
+
+	content.Miniature = URLMiniature
+	content.PublicIDMiniature = publicIDMiniature
+
 	content.Author = author
 	content.FilesURL = []domain.FileURLReq{}
-	isVideo := false
 	for i := 0; ; i++ {
 		fileKey := fmt.Sprintf("filesURL[%d][fileURL]", i)
 		file, err := c.FormFile(fileKey)
@@ -35,7 +58,7 @@ func CreateFile(c *fiber.Ctx) error {
 		}
 
 		// Procesar y cargar archivos
-		secureURL, publicID, miniature, err := utils.ProcessUploadedFiles(c, file, isVideo)
+		secureURL, publicID, err := utils.UploadRaws(c, file)
 		if err != nil {
 			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 				"error": "Error al procesar archivos",
@@ -52,7 +75,6 @@ func CreateFile(c *fiber.Ctx) error {
 		content.FilesURL = append(content.FilesURL, newFileURL)
 
 		// Actualizar el campo Miniature (deberías considerar cómo gestionar este campo)
-		content.Miniature = miniature
 
 		log.Printf("Creando un nuevo archivo (índice %d)...\n", i)
 	}
@@ -63,7 +85,14 @@ func CreateFile(c *fiber.Ctx) error {
 			"error": "Error al crear el archivo",
 		})
 	}
-
+	if content.CreateAnnouncement {
+		announcement := createAnnouncementFromFile(content)
+		if err := services.CreateAnnouncement(announcement); err != nil {
+			return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+				"error": "Error al crear el anuncio",
+			})
+		}
+	}
 	return c.JSON(content)
 }
 
@@ -92,4 +121,12 @@ func UpdateFileHandler(c *fiber.Ctx) error {
 		})
 	}
 	return c.JSON(content)
+}
+func createAnnouncementFromFile(content domain.FileReq) domain.FeedReq {
+	announcement := domain.FeedReq{
+		Title:       content.Title,
+		Description: "Se ha creado un nuevo documento: " + content.Title + "\n" + content.Description,
+		Author:      content.Author,
+	}
+	return announcement
 }

@@ -13,26 +13,51 @@ import (
 )
 
 func SetupRoutes(app *fiber.App) {
-
+	// Rutas para crear contenido
 	app.Post("/contentCourse", handlers.CreateCourse)
 	app.Post("/contentPost", handlers.CreatePost)
 	app.Post("/contentFile", handlers.CreateFile)
 	app.Post("/contentTest", handlers.CreateTest)
+	app.Post("/contentTest/:id/qualify", handlers.CalificarTestHandler)
+	//get attemps
+	app.Get("/contentTest/:id/attempts", handlers.GetTestAttemptsHandler)
+	//rating
+	app.Post("/content/rate/:contentID", handlers.RateContent)
+	app.Get("/content/:contentID/rating/count", handlers.GetRatingCount)
+	app.Get("/content/:contentID/rating/average", handlers.GetRatingAverage)
 
-	app.Get("/contentCourse/", handlers.GetAllCoursesHandler)
-	app.Get("/contentPost/", handlers.GetAllPostsHandler)
-	app.Get("/contentFile/", handlers.GetAllFilesHandler)
-	app.Get("/contentTest/", handlers.GetAllTestsHandler)
+	app.Post("/createFeed", handlers.CreateFeed)
+	app.Patch("/posts/:postID/comments", handlers.UpdatePostComments)
+	app.Delete("/posts/:postID/comments/:commentID", handlers.DeleteFeedCommentsHandler)
+	app.Get("/posts/authors/:author", handlers.GetPostsByAuthorHandler)
+	app.Get("/posts/:postID", handlers.GetContentByIDFeed)
 
+	app.Post("/contentTest/:id/qualify", handlers.CalificarTestHandler)
+	// Rutas para obtener contenido
+	app.Get("/contentCourse", handlers.GetAllCoursesHandler)
+	app.Get("/contentPost", handlers.GetAllPostsHandler)
+	app.Get("/contentFile", handlers.GetAllFilesHandler)
+	app.Get("/contentTest", handlers.GetAllTestsHandler)
+
+	app.Get("/contentFeed", handlers.GetContentFeedHandler)
+	// Rutas para actualizar contenido
 	app.Patch("/contentCourse/:id", handlers.UpdateCourseHandler)
 	app.Put("/contentPost/:id", handlers.UpdatePostHandler)
 	app.Put("/contentFile/:id", handlers.UpdateFileHandler)
 	app.Put("/contentTest/:id", handlers.UpdateTestHandler)
 
-	app.Get("/Content/:id", handlers.GetContentByIDHandler)
-	app.Get("/Content", handlers.GetAllContentHandler)
+	// Rutas para obtener contenido por ID
+	app.Get("/content/:id", handlers.GetContentByIDHandler)
+	app.Get("/contentByAuthor/:author", handlers.GetContentByAuthorHandler)
 
+	// Rutas para obtener un feed de contenido
+	app.Get("/contentFeed", handlers.GetContentFeedHandler)
+	app.Get("/contentFeedMore", handlers.GetContentFeedHandler)
+	app.Get("/content", handlers.GetAllContentHandler)
+
+	// Ruta para eliminar contenido
 	app.Delete("/Content/:id", handlers.DeleteContentHandler)
+	app.Delete("/posts/:postID", handlers.DeleteFeedHandler)
 	// Agregar otras rutas para actualizar, eliminar y otras operaciones...
 }
 

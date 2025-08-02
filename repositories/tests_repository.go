@@ -47,3 +47,34 @@ func UpdateTest(id primitive.ObjectID, content domain.TestReq) error {
 	_, err := collection.UpdateOne(context.Background(), filter, update)
 	return err
 }
+func SaveTestResult(content domain.TestResultReq) error {
+	collection := utils.GetCollection("TestResult")
+	content.BeforeInsert() // Actualiza createdAt y updatedAt antes de insertar
+	_, err := collection.InsertOne(context.Background(), content)
+	if err != nil {
+		log.Printf("Error al crear el curso: %v\n", err)
+	}
+	return err
+}
+func GetTestResult(contentID primitive.ObjectID, email string) (float64, error) {
+	collection := utils.GetCollection("TestResult")
+	filter := bson.M{"content_id": contentID, "author.email": email}
+	var result models.TestResult
+	err := collection.FindOne(context.Background(), filter).Decode(&result)
+	if err != nil {
+		return 0, err
+	}
+
+	return result.Calification, nil
+}
+func GetTestAttempts(contentID primitive.ObjectID, email string) (int64, error) {
+	collection := utils.GetCollection("TestResult")
+	filter := bson.M{"content_id": contentID, "author.email": email}
+	//contar los intentos
+	attempts, err := collection.CountDocuments(context.Background(), filter)
+	if err != nil {
+		return 0, err
+	}
+
+	return attempts, nil
+}

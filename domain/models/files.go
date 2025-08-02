@@ -2,8 +2,9 @@
 package models
 
 type Files struct {
-	AbstractContent `bson:",inline" json:",inline"`
-	FilesURL        []FileURL `json:"filesURL" validate:"required"`
+	AbstractContent    `bson:",inline" json:",inline"`
+	CreateAnnouncement bool      `json:"createAnnouncement"`
+	FilesURL           []FileURL `json:"filesURL" validate:"required"`
 }
 type FileURL struct {
 	FileURL            string `json:"fileURL" validate:"required"`

@@ -15,3 +15,10 @@ func DeleteContentByID(id primitive.ObjectID) error {
 	_, err := collection.DeleteOne(context.Background(), filter)
 	return err
 }
+func DeleteFeedByID(id primitive.ObjectID) error {
+	collection := utils.GetCollection("Feed")
+	filter := bson.M{"_id": id}
+
+	_, err := collection.DeleteOne(context.Background(), filter)
+	return err
+}

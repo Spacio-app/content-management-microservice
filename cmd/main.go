@@ -40,9 +40,9 @@ func main() {
 	app := fiber.New(fiber.Config{BodyLimit: 100 * 1024 * 1024})
 	// Configurar middleware CORS
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "*",
-		AllowHeaders: "Origin, Content-Type, Accept",
-		AllowMethods: "GET, POST, PUT, DELETE",
+		AllowOrigins: os.Getenv("CORS_ALLOW_ORIGINS"), // Puedes definir múltiples orígenes separados por comas
+		AllowHeaders: "Origin, Content-Type, Accept, Authorization, User",
+		AllowMethods: "GET, POST, PUT, DELETE, PATCH",
 	}))
 	// app.Use(middleware.SessionValidationMiddleware())
 
@@ -60,9 +60,9 @@ func main() {
 	routes.SetupRoutes(app)
 
 	// Obtener una referencia a la colección
-	collection := utils.GetCollection("Content") // <colección>
+	collection := utils.GetCollection("Feed") // <colección>
 
-	// Consulta
+	// Consultad
 	// filter := bson.M{"campo": "valor"}
 	filter := bson.M{} // <filtro>
 	cursor, err := collection.Find(context.Background(), filter)

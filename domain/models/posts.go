@@ -2,8 +2,12 @@
 package models
 
 type Posts struct {
-	AbstractContent `bson:",inline" json:",inline"`
-	ImagesURL       []ImageURL `bson:"imagesURL" json:"imagesURL,omitempty"`
+	// AbstractContent    `bson:",inline" json:",inline"`
+	Author             Author `bson:"author" json:"author" validate:"required"`
+	CreateAnnouncement bool   `json:"createAnnouncement"`
+	//ImagesURL          []ImageURL `bson:"imagesURL" json:"imagesURL,omitempty"`
+	Blocks    []map[string]interface{} `bson:"blocks" json:"blocks,omitempty"`
+	EntityMap map[string]interface{}   `bson:"entityMap" json:"entityMap,omitempty"`
 	// Otros campos que puedas necesitar
 	// we need dates for posts content
 
