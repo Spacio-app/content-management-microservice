@@ -38,7 +38,7 @@ func main() {
 	app := fiber.New(fiber.Config{BodyLimit: 100 * 1024 * 1024})
 	// Configurar middleware CORS
 	app.Use(cors.New(cors.Config{
-		AllowOrigins: "*",
+		AllowOrigins: os.Getenv("CORS_ALLOW_ORIGINS"), // Puedes definir múltiples orígenes separados por comas
 		AllowHeaders: "Origin, Content-Type, Accept, Authorization, User",
 		AllowMethods: "GET, POST, PUT, DELETE, PATCH",
 	}))
